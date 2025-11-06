@@ -1,0 +1,24 @@
+# Node
+node_modules/
+client/dist/
+
+# Python
+server/venv/
+**/__pycache__/
+*.pyc
+
+# Environment files
+*.env
+*.env.*
+server/.env
+client/.env
+!server/.env.example
+
+# OS/Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs
+*.log
+logs/
