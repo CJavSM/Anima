@@ -1,0 +1,604 @@
+/* Modal Overlay */
+.music-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.music-modal {
+  background: white;
+  border-radius: 1rem;
+  max-width: 60rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.music-header {
+  background: linear-gradient(135deg, var(--primary-50), var(--blue-50));
+  padding: 2rem;
+  border-top: 4px solid var(--primary-600);
+  border-radius: 1rem 1rem 0 0;
+  position: relative;
+}
+
+.music-header-content {
+  padding-right: 3rem;
+}
+
+.music-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.music-subtitle {
+  font-size: 1rem;
+  color: var(--gray-700);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: var(--gray-700);
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close:hover {
+  background: var(--gray-100);
+  transform: scale(1.1);
+}
+
+/* Music Info Section */
+.music-info {
+  padding: 1.5rem 2rem;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.music-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  color: var(--gray-900);
+  font-weight: 700;
+}
+
+/* Music Parameters */
+.music-params {
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.params-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 0.75rem;
+}
+
+.params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.param-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--gray-50);
+  border-radius: 0.5rem;
+}
+
+.param-icon {
+  font-size: 1.5rem;
+}
+
+.param-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+
+.param-value {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+/* Tracks Container */
+.tracks-container {
+  padding: 1.5rem 2rem 2rem;
+}
+
+.tracks-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Track Item */
+.track-item {
+  display: grid;
+  grid-template-columns: 40px 80px 1fr auto 60px;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: var(--gray-50);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.track-item:hover {
+  background: var(--gray-100);
+  transform: translateX(4px);
+}
+
+.track-number {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.track-image-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.track-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.track-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 1rem;
+}
+
+.track-image-container:hover .track-play-btn {
+  opacity: 1;
+}
+
+.track-play-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.track-info {
+  min-width: 0;
+}
+
+.track-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-artists {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin-bottom: 0.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-album {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.track-duration {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.track-popularity {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.popularity-label {
+  font-size: 1rem;
+}
+
+.popularity-value {
+  color: var(--gray-700);
+  font-weight: 600;
+}
+
+.track-spotify-btn {
+  background: #1DB954;
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+}
+
+.track-spotify-btn:hover {
+  background: #1ed760;
+  transform: scale(1.1);
+}
+
+/* Loading State */
+.music-loading {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.spinner-large {
+  width: 4rem;
+  height: 4rem;
+  border: 0.5rem solid var(--gray-200);
+  border-top-color: var(--primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+.music-loading p {
+  font-size: 1.125rem;
+  color: var(--gray-700);
+}
+
+/* Error State */
+.music-error {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.music-error p {
+  font-size: 1.125rem;
+  color: var(--gray-700);
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .music-modal {
+    max-height: 95vh;
+  }
+
+  .music-header {
+    padding: 1.5rem;
+  }
+
+  .music-title {
+    font-size: 1.5rem;
+  }
+
+  .music-info {
+    padding: 1rem 1.5rem;
+  }
+
+  .music-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .params-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracks-container {
+    padding: 1rem 1.5rem;
+  }
+
+  .track-item {
+    grid-template-columns: 30px 60px 1fr 50px;
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  .track-image-container {
+    width: 60px;
+    height: 60px;
+  }
+
+  .track-spotify-btn {
+    grid-column: 4;
+    grid-row: 1;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .track-details {
+    grid-column: 3;
+    grid-row: 2;
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+}
+/* 
+Agregar al archivo: client/src/components/MusicRecommendations/MusicRecommendations.css
+*/
+
+/* Botón para guardar playlist */
+.stat-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-save-playlist {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-save-playlist:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-save-playlist:active {
+  transform: translateY(0);
+}
+
+/* Diálogo de guardar */
+.save-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.save-dialog {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  max-width: 32rem;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+.save-dialog-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.save-dialog-field {
+  margin-bottom: 1.25rem;
+}
+
+.save-dialog-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.5rem;
+}
+
+.save-dialog-field input,
+.save-dialog-field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  color: var(--gray-900);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.save-dialog-field input:focus,
+.save-dialog-field textarea:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.save-dialog-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.save-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.save-dialog-actions .btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-dialog-actions .btn-primary {
+  background: var(--primary-600);
+  color: white;
+}
+
+.save-dialog-actions .btn-primary:hover:not(:disabled) {
+  background: var(--primary-700);
+}
+
+.save-dialog-actions .btn-primary:disabled {
+  background: var(--gray-300);
+  cursor: not-allowed;
+}
+
+.save-dialog-actions .btn-secondary {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+
+.save-dialog-actions .btn-secondary:hover:not(:disabled) {
+  background: var(--gray-300);
+}
+
+/* Estado de éxito */
+.save-success {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.save-success p:last-child {
+  font-size: 1.125rem;
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+/* Responsive para diálogo */
+@media (max-width: 640px) {
+  .save-dialog {
+    padding: 1.5rem;
+  }
+
+  .save-dialog-title {
+    font-size: 1.25rem;
+  }
+
+  .save-dialog-actions {
+    flex-direction: column;
+  }
+}
