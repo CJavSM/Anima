@@ -1,313 +1,430 @@
-import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [scrollY, setScrollY] = useState(0);
-  const [showFloatingBtn, setShowFloatingBtn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeFeature, setActiveFeature] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Efecto parallax suave
+  // Detectar scroll para navbar
   useEffect(() => {
     const handleScroll = () => {
-      setScrollY(window.scrollY);
-      setShowFloatingBtn(window.scrollY > 300);
+      setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Seguir mouse para efectos parallax
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const features = [
     {
-      icon: '🎭',
-      title: 'Análisis de Emociones',
-      description: 'Tecnología de IA que detecta tu estado emocional a través de tu expresión facial',
-      stat: '99.9%',
-      statLabel: 'Precisión'
+      emoji: "📸",
+      title: "Análisis de Emoción",
+      description: "Capturá tu expresión y descubrí qué emoción estás sintiendo en el momento",
+      color: "#4424d4"
     },
     {
-      icon: '🎵',
-      title: 'Recomendaciones Personalizadas',
-      description: 'Playlists de Spotify adaptadas perfectamente a tu estado de ánimo',
-      stat: '10M+',
-      statLabel: 'Canciones'
+      emoji: "🎵",
+      title: "Música Personalizada",
+      description: "Recibí recomendaciones de Spotify que se adaptan perfectamente a tu estado de ánimo",
+      color: "#764ba2"
     },
     {
-      icon: '📊',
-      title: 'Historial Completo',
-      description: 'Revisa tus análisis anteriores y descubre patrones en tus emociones',
-      stat: '24/7',
-      statLabel: 'Disponible'
+      emoji: "💾",
+      title: "Guardá tus Playlists",
+      description: "Creá y guardá tus playlists favoritas para escucharlas cuando quieras",
+      color: "#C98DFF"
     },
     {
-      icon: '⭐',
-      title: 'Guarda tus Favoritos',
-      description: 'Crea tu colección de playlists para cada momento',
-      stat: '∞',
-      statLabel: 'Playlists'
+      emoji: "📊",
+      title: "Seguimiento Emocional",
+      description: "Visualizá tu historial emocional y descubrí patrones en tu estado de ánimo",
+      color: "#A355FF"
     }
   ];
 
   const testimonials = [
     {
-      name: 'María González',
-      role: 'Estudiante',
-      text: 'Ánima cambió mi forma de escuchar música. Cada playlist es perfecta para mi estado de ánimo.',
-      rating: 5,
-      emoji: '🎓'
+      name: "María González",
+      role: "Usuario frecuente",
+      text: "¡Increíble! Nunca pensé que una app pudiera entender tan bien cómo me siento",
+      avatar: "M",
+      rating: 5
     },
     {
-      name: 'Carlos Ramírez',
-      role: 'Profesional',
-      text: 'Increíble cómo la IA entiende exactamente lo que necesito escuchar. ¡Impresionante!',
-      rating: 5,
-      emoji: '💼'
+      name: "Carlos Pérez",
+      role: "Amante de la música",
+      text: "Las recomendaciones son perfectas. Es como tener un DJ personal que lee mi mente",
+      avatar: "C",
+      rating: 5
     },
     {
-      name: 'Ana Martínez',
-      role: 'Artista',
-      text: 'La mejor app para descubrir música nueva. Las recomendaciones son siempre acertadas.',
-      rating: 5,
-      emoji: '🎨'
+      name: "Ana Rodríguez",
+      role: "Psicóloga",
+      text: "Una herramienta fascinante para conectar emociones con música. Mis pacientes la aman",
+      avatar: "A",
+      rating: 5
     }
   ];
 
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="landing-page">
-      {/* Botón flotante de contacto */}
-      <button 
-        className={`floating-contact-btn ${showFloatingBtn ? 'visible' : ''}`}
-        onClick={() => navigate('/contact')}
-        title="Contáctanos"
-      >
-        <span className="floating-btn-icon">💬</span>
-      </button>
+      {/* Navbar mejorada de ContactPage */}
+      <nav className={`landing-navbar ${scrolled ? 'scrolled' : ''}`}>
+        <div className="navbar-container">
+          <div className="navbar-brand" onClick={() => navigate('/')}>
+            {/* Logo SVG */}
+            <svg className="brand-logo" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{stopColor:"#6366F1", stopOpacity:1}} />
+                  <stop offset="50%" style={{stopColor:"#EC4899", stopOpacity:1}} />
+                  <stop offset="100%" style={{stopColor:"#FBBF24", stopOpacity:1}} />
+                </linearGradient>
+                <filter id="logoGlow">
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              
+              {/* Marco de cámara simplificado */}
+              <path d="M 90 90 L 90 120 M 90 90 L 120 90" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
+              <path d="M 310 90 L 310 120 M 310 90 L 280 90" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
+              <path d="M 90 310 L 90 280 M 90 310 L 120 310" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
+              <path d="M 310 310 L 310 280 M 310 310 L 280 310" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
+              
+              {/* Rostro simplificado */}
+              <path d="M 140 195 Q 140 140 200 120 Q 260 140 260 195" fill="none" stroke="url(#logoGrad)" strokeWidth="3" filter="url(#logoGlow)"/>
+              <circle cx="170" cy="205" r="8" fill="url(#logoGrad)"/>
+              <circle cx="230" cy="205" r="8" fill="url(#logoGrad)"/>
+              <path d="M 175 260 Q 200 280 225 260" fill="none" stroke="url(#logoGrad)" strokeWidth="3" strokeLinecap="round"/>
+              
+              {/* Notas musicales */}
+              <g transform="translate(130, 120)" filter="url(#logoGlow)">
+                <circle cx="0" cy="0" r="5" fill="url(#logoGrad)"/>
+                <rect x="5" y="-15" width="2" height="15" fill="url(#logoGrad)"/>
+              </g>
+              <g transform="translate(270, 120)" filter="url(#logoGrad)">
+                <circle cx="0" cy="0" r="5" fill="url(#logoGrad)"/>
+                <rect x="5" y="-15" width="2" height="15" fill="url(#logoGrad)"/>
+              </g>
+            </svg>
+            <span className="brand-text">Ánima</span>
+          </div>
 
-      {/* Hero Section con efecto parallax */}
-      <div className="hero-section" style={{ transform: `translateY(${scrollY * 0.1}px)` }}>
+          <button className="navbar-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? '✕' : '☰'}
+          </button>
+
+          <div className={`navbar-menu ${isMenuOpen ? 'open' : ''}`}>
+            <a href="#features" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+              Características
+            </a>
+            <a href="#how-it-works" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+              Cómo Funciona
+            </a>
+            <a href="#testimonials" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+              Testimonios
+            </a>
+            <button onClick={() => navigate('/contact')} className="nav-link-button contact-btn">
+              Contacto
+            </button>
+            <button onClick={() => navigate('/login')} className="nav-link-button">
+              Iniciar Sesión
+            </button>
+            <button onClick={() => navigate('/register')} className="nav-link-button primary">
+              Registrarse
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Fondo animado con parallax */}
+      <div className="animated-background">
+        <div 
+          className="gradient-orb orb-1"
+          style={{
+            transform: `translate(${mousePosition.x * 0.05}px, ${mousePosition.y * 0.05}px)`
+          }}
+        />
+        <div 
+          className="gradient-orb orb-2"
+          style={{
+            transform: `translate(${-mousePosition.x * 0.03}px, ${mousePosition.y * 0.03}px)`
+          }}
+        />
+        <div 
+          className="gradient-orb orb-3"
+          style={{
+            transform: `translate(${mousePosition.x * 0.04}px, ${-mousePosition.y * 0.04}px)`
+          }}
+        />
+      </div>
+
+      {/* Hero Section Mejorado */}
+      <section className="hero-section">
         <div className="hero-content">
-          <div className="hero-badge pulse-animation">
-            <span className="badge-icon">✨</span>
-            <span className="badge-text">Powered by AI & Spotify</span>
+          <div className="hero-badge floating">
+            <span className="badge-emoji">✨</span>
+            <span>Powered by AWS Rekognition & Spotify</span>
           </div>
           
           <h1 className="hero-title">
-            Ánima
+            Música que refleja
+            <span className="gradient-text"> cómo te sentís</span>
           </h1>
           
-          <h2 className="hero-subtitle">
-            La música que refleja tu alma
-          </h2>
-          
-          <p className="hero-description">
-            Captura tu emoción y deja que la inteligencia artificial encuentre 
-            la banda sonora perfecta para tu momento. Música personalizada 
-            basada en cómo te sientes.
+          <p className="hero-subtitle">
+            Descubrí el poder de la inteligencia artificial que analiza tus emociones
+            y crea la banda sonora perfecta para tu momento
           </p>
-          
+
+          <div className="hero-stats">
+            <div className="stat-item floating" style={{animationDelay: '0s'}}>
+              <div className="stat-number">+1000</div>
+              <div className="stat-label">Análisis realizados</div>
+            </div>
+            <div className="stat-item floating" style={{animationDelay: '0.2s'}}>
+              <div className="stat-number">8</div>
+              <div className="stat-label">Emociones detectadas</div>
+            </div>
+            <div className="stat-item floating" style={{animationDelay: '0.4s'}}>
+              <div className="stat-number">∞</div>
+              <div className="stat-label">Playlists únicas</div>
+            </div>
+          </div>
+
           <div className="hero-cta">
             <button 
-              className="btn-oneui btn-primary-oneui"
+              className="cta-button primary pulse"
               onClick={() => navigate('/register')}
             >
-              <span className="btn-content">
-                <span className="btn-icon">🚀</span>
-                <span className="btn-text">Comenzar Gratis</span>
-              </span>
+              <span>Comenzar Gratis</span>
+              <span className="button-shine"></span>
             </button>
-            
             <button 
-              className="btn-oneui btn-secondary-oneui"
-              onClick={() => navigate('/login')}
+              className="cta-button secondary"
+              onClick={() => document.getElementById('features').scrollIntoView({behavior: 'smooth'})}
             >
-              <span className="btn-content">
-                <span className="btn-text">Iniciar Sesión</span>
-              </span>
+              Ver Demo
             </button>
           </div>
 
-          {/* Contador de usuarios (animado) */}
-          <div className="stats-badges">
-            <div className="stat-badge">
-              <span className="stat-number">1000+</span>
-              <span className="stat-label">Usuarios Activos</span>
-            </div>
-            <div className="stat-badge">
-              <span className="stat-number">50K+</span>
-              <span className="stat-label">Análisis Realizados</span>
-            </div>
-            <div className="stat-badge">
-              <span className="stat-number">4.9★</span>
-              <span className="stat-label">Valoración</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="hero-visual">
-          <div className="emotion-cards">
-            <div className="emotion-card card-1">
-              <span className="emotion-emoji">😊</span>
-              <span className="emotion-label">Feliz</span>
-            </div>
-            <div className="emotion-card card-2">
-              <span className="emotion-emoji">😌</span>
-              <span className="emotion-label">Tranquilo</span>
-            </div>
-            <div className="emotion-card card-3">
-              <span className="emotion-emoji">😢</span>
-              <span className="emotion-label">Triste</span>
-            </div>
-            <div className="emotion-card card-4">
-              <span className="emotion-emoji">😮</span>
-              <span className="emotion-label">Sorprendido</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Features Section */}
-      <div className="features-section">
-        <div className="features-header">
-          <h3 className="section-title">¿Cómo funciona?</h3>
-          <p className="section-subtitle">
-            Tres simples pasos para descubrir tu música perfecta
-          </p>
-        </div>
-        
-        <div className="features-grid">
-          {features.map((feature, index) => (
-            <div key={index} className="feature-card-modern hover-lift">
-              <div className="feature-icon-wrapper">
-                <span className="feature-icon-large">{feature.icon}</span>
-              </div>
-              <h4 className="feature-title-modern">{feature.title}</h4>
-              <p className="feature-description-modern">{feature.description}</p>
-              <div className="feature-stat">
-                <span className="stat-big">{feature.stat}</span>
-                <span className="stat-label-small">{feature.statLabel}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Testimonials Section */}
-      <div className="testimonials-section">
-        <h3 className="section-title">Lo que dicen nuestros usuarios</h3>
-        <div className="testimonial-carousel">
-          <div className="testimonial-card active">
-            <div className="testimonial-emoji">{testimonials[currentTestimonial].emoji}</div>
-            <div className="testimonial-stars">
-              {'⭐'.repeat(testimonials[currentTestimonial].rating)}
-            </div>
-            <p className="testimonial-text">"{testimonials[currentTestimonial].text}"</p>
-            <div className="testimonial-author">
-              <span className="author-name">{testimonials[currentTestimonial].name}</span>
-              <span className="author-role">{testimonials[currentTestimonial].role}</span>
-            </div>
-          </div>
-          <div className="carousel-dots">
-            {testimonials.map((_, index) => (
-              <button
+          {/* Emotions preview interactivo */}
+          <div className="emotions-preview">
+            {['😊', '😢', '😠', '😌', '😮', '😨'].map((emoji, index) => (
+              <div
                 key={index}
-                className={`dot ${index === currentTestimonial ? 'active' : ''}`}
-                onClick={() => setCurrentTestimonial(index)}
-              />
+                className="emotion-bubble floating"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animationDuration: `${3 + index * 0.5}s`
+                }}
+              >
+                {emoji}
+              </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* How It Works Section */}
-      <div className="steps-section">
-        <h3 className="section-title">Empieza en segundos</h3>
-        
-        <div className="steps-container">
-          <div className="step-item">
-            <div className="step-number">1</div>
-            <div className="step-content">
-              <h4 className="step-title">Captura tu momento</h4>
-              <p className="step-description">
-                Toma una selfie o sube una foto que refleje cómo te sientes
-              </p>
-            </div>
+      {/* Features Section INTERACTIVA */}
+      <section id="features" className="features-section">
+        <div className="section-container">
+          <div className="section-header">
+            <h2 className="section-title">
+              ¿Qué hace a <span className="gradient-text">Ánima</span> especial?
+            </h2>
+            <p className="section-subtitle">
+              Combinamos tecnología de vanguardia con diseño intuitivo
+            </p>
           </div>
-          
-          <div className="step-divider"></div>
-          
-          <div className="step-item">
-            <div className="step-number">2</div>
-            <div className="step-content">
-              <h4 className="step-title">Análisis instantáneo</h4>
-              <p className="step-description">
-                Nuestra IA analiza tu expresión y detecta tu emoción dominante
-              </p>
-            </div>
+
+          <div className="features-grid">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className={`feature-card interactive ${activeFeature === index ? 'active' : ''}`}
+                onMouseEnter={() => setActiveFeature(index)}
+                onMouseLeave={() => setActiveFeature(null)}
+                style={{
+                  '--feature-color': feature.color,
+                  animationDelay: `${index * 0.1}s`
+                }}
+              >
+                <div className="feature-icon-wrapper">
+                  <span className="feature-emoji">{feature.emoji}</span>
+                  <div className="icon-pulse"></div>
+                </div>
+                <h3 className="feature-title">{feature.title}</h3>
+                <p className="feature-description">{feature.description}</p>
+                <div className="feature-hover-effect"></div>
+              </div>
+            ))}
           </div>
-          
-          <div className="step-divider"></div>
-          
-          <div className="step-item">
-            <div className="step-number">3</div>
-            <div className="step-content">
-              <h4 className="step-title">Disfruta tu música</h4>
-              <p className="step-description">
-                Recibe recomendaciones personalizadas de Spotify al instante
-              </p>
+        </div>
+      </section>
+
+      {/* How it works - Animado */}
+      <section id="how-it-works" className="how-it-works-section">
+        <div className="section-container">
+          <div className="section-header">
+            <h2 className="section-title">
+              ¿Cómo funciona <span className="gradient-text">Ánima</span>?
+            </h2>
+            <p className="section-subtitle">
+              Tres simples pasos para descubrir tu música perfecta
+            </p>
+          </div>
+
+          <div className="steps-container">
+            <div className="step-card">
+              <div className="step-number">1</div>
+              <div className="step-icon">📸</div>
+              <h3>Capturá tu emoción</h3>
+              <p>Tomá una selfie o subí una foto. Nuestra IA analiza tu expresión facial</p>
+            </div>
+
+            <div className="step-connector">
+              <div className="connector-line"></div>
+              <div className="connector-dot"></div>
+            </div>
+
+            <div className="step-card">
+              <div className="step-number">2</div>
+              <div className="step-icon">🤖</div>
+              <h3>Análisis inteligente</h3>
+              <p>AWS Rekognition detecta tu emoción con precisión del 95%</p>
+            </div>
+
+            <div className="step-connector">
+              <div className="connector-line"></div>
+              <div className="connector-dot"></div>
+            </div>
+
+            <div className="step-card">
+              <div className="step-number">3</div>
+              <div className="step-icon">🎵</div>
+              <h3>Disfrutá la música</h3>
+              <p>Recibí una playlist personalizada de Spotify que refleja tu estado de ánimo</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* CTA Section */}
-      <div className="cta-section">
-        <div className="cta-content hover-lift">
-          <h3 className="cta-title">¿Listo para empezar?</h3>
-          <p className="cta-description">
-            Únete a miles de usuarios que ya descubrieron su música perfecta
+      {/* Testimonials Section */}
+      <section id="testimonials" className="testimonials-section">
+        <div className="section-container">
+          <div className="section-header">
+            <h2 className="section-title">
+              Lo que dicen nuestros <span className="gradient-text">usuarios</span>
+            </h2>
+            <p className="section-subtitle">
+              Miles de personas ya usan Ánima para descubrir nueva música
+            </p>
+          </div>
+
+          <div className="testimonials-grid">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="testimonial-card floating"
+                style={{animationDelay: `${index * 0.15}s`}}
+              >
+                <div className="testimonial-header">
+                  <div className="testimonial-avatar">
+                    {testimonial.avatar}
+                  </div>
+                  <div className="testimonial-info">
+                    <h4>{testimonial.name}</h4>
+                    <p>{testimonial.role}</p>
+                  </div>
+                  <div className="testimonial-rating">
+                    {'⭐'.repeat(testimonial.rating)}
+                  </div>
+                </div>
+                <p className="testimonial-text">"{testimonial.text}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="final-cta-section">
+        <div className="cta-content">
+          <h2 className="cta-title">
+            ¿Listo para descubrir tu música perfecta?
+          </h2>
+          <p className="cta-subtitle">
+            Únete a miles de usuarios que ya disfrutan de Ánima
           </p>
-          
-          <button 
-            className="btn-oneui btn-cta-oneui"
-            onClick={() => navigate('/register')}
-          >
-            <span className="btn-content">
-              <span className="btn-text">Crear Cuenta Gratis</span>
-              <span className="btn-icon">→</span>
-            </span>
-          </button>
+          <div className="cta-buttons">
+            <button 
+              className="cta-button primary large pulse"
+              onClick={() => navigate('/register')}
+            >
+              <span>Comenzar Ahora - Es Gratis</span>
+              <span className="button-arrow">→</span>
+            </button>
+            <button 
+              className="cta-button secondary large"
+              onClick={() => navigate('/contact')}
+            >
+              ¿Tienes preguntas? Contáctanos
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <h4 className="footer-logo">Ánima</h4>
-            <p className="footer-tagline">Música que refleja tu alma</p>
+            <h3>Ánima</h3>
+            <p>Música que refleja cómo te sentís</p>
           </div>
-          
           <div className="footer-links">
-            <button onClick={() => navigate('/contact')} className="footer-link">
-              Contacto
-            </button>
+            <div className="footer-column">
+              <h4>Producto</h4>
+              <a href="#features">Características</a>
+              <a href="#how-it-works">Cómo Funciona</a>
+              <a href="#testimonials">Testimonios</a>
+            </div>
+            <div className="footer-column">
+              <h4>Soporte</h4>
+              <a href="/contact">Contacto</a>
+              <a href="https://wa.me/50212345678" target="_blank" rel="noopener noreferrer">
+                WhatsApp
+              </a>
+            </div>
+            <div className="footer-column">
+              <h4>Legal</h4>
+              <a href="#privacy">Privacidad</a>
+              <a href="#terms">Términos</a>
+            </div>
           </div>
-          
-          <div className="footer-info">
-            <p className="footer-text">
-              © 2025 Ánima. Todos los derechos reservados.
-            </p>
-          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© 2025 Ánima. Todos los derechos reservados.</p>
+          <p>Powered by AWS Rekognition & Spotify API</p>
         </div>
       </footer>
     </div>

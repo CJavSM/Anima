@@ -151,21 +151,6 @@ const ContactPage = () => {
               </div>
             </div>
 
-            <div className="method-card">
-              <div className="method-icon-wrapper info-icon">
-                <span className="method-icon">ℹ️</span>
-              </div>
-              <h3 className="method-title">Centro de Ayuda</h3>
-              <p className="method-description">
-                Encuentra respuestas rápidas en nuestras preguntas frecuentes
-              </p>
-              <button className="btn-method btn-secondary">
-                <span className="btn-content">
-                  <span className="btn-text">Ver FAQ</span>
-                  <span className="btn-icon">→</span>
-                </span>
-              </button>
-            </div>
           </div>
 
           {/* Columna derecha - Formulario */}
