@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import LandingPage from './components/LandingPage/LandingPage';
+import ContactPage from './components/ContactPage/ContactPage';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import AuthCallback from './components/Auth/AuthCallback';
@@ -14,8 +16,11 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Ruta raíz - redirige al login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Ruta raíz - Landing Page */}
+          <Route path="/" element={<LandingPage />} />
+          
+          {/* Ruta pública de contacto */}
+          <Route path="/contact" element={<ContactPage />} />
           
           {/* Rutas públicas */}
           <Route path="/login" element={<Login />} />
@@ -58,8 +63,8 @@ function App() {
             }
           />
           
-          {/* Ruta 404 - redirige al home si está autenticado, sino al login */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          {/* Ruta 404 - redirige a landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </Router>
