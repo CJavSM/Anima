@@ -145,7 +145,7 @@ def spotify_callback(
     """
     Maneja el callback de Spotify después de que el usuario autoriza la aplicación.
 
-    Si es exitoso, redirige al frontend con el access_token.
+    Si es exitoso, redirige al frontend con el access_token o con el code.
     Si falla, redirige al frontend con el error.
     """
     frontend_redirect = os.getenv("SPOTIFY_FRONTEND_REDIRECT", "http://localhost:5173/auth/callback")
@@ -157,6 +157,15 @@ def spotify_callback(
             status_code=status.HTTP_307_TEMPORARY_REDIRECT
         )
 
+    # El frontend debe manejarlo porque necesita el token del usuario
+    if state and state.startswith('link:'):
+        # Pasar el code y state al frontend para que lo procese
+        return RedirectResponse(
+            url=f"{frontend_redirect}?code={code}&state={state}",
+            status_code=status.HTTP_307_TEMPORARY_REDIRECT
+        )
+
+    # Para login/registro normal (state no tiene prefijo "link:")
     try:
         # Procesar el callback y obtener tokens
         token_response = AuthController.spotify_callback(code, db)
@@ -171,7 +180,6 @@ def spotify_callback(
             url=f"{frontend_redirect}?error={str(e)}",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT
         )
-
 @router.get(
     "/spotify/link",
     status_code=status.HTTP_200_OK,
@@ -194,12 +202,14 @@ def spotify_link_url(
         }
 
     # Generar URL de autorización que redirija al frontend (sin query params).
-    # Usaremos el `state` para indicar que se trata de un "link" (prefijo 'link:').
-    frontend_redirect = os.getenv("SPOTIFY_FRONTEND_REDIRECT", "http://localhost:5173/auth/callback")
+  
 
     # Generar estado único y prefix 'link:' para que el frontend sepa interpretar
     raw_state = secrets.token_urlsafe(24)
     prefixed_state = f"link:{raw_state}"
+
+    auth_url, state = spotify_auth_service.get_authorization_url(state=prefixed_state)
+    return {"authorization_url": auth_url, "state": state}
 
     auth_url, state = spotify_auth_service.get_authorization_url(state=prefixed_state, redirect_uri=frontend_redirect)
     return {"authorization_url": auth_url, "state": state}
