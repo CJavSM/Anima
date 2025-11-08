@@ -74,6 +74,13 @@ const ContactPage = () => {
 
   return (
     <div className="contact-page">
+      {/* Fondo animado como LandingPage */}
+      <div className="animated-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
+
       {/* Header con navegación */}
       <header className="contact-header">
         <div className="contact-header-container">
@@ -94,7 +101,7 @@ const ContactPage = () => {
       {/* Contenido principal */}
       <div className="contact-content">
         <div className="contact-hero">
-          <div className="contact-hero-badge">
+          <div className="contact-hero-badge floating">
             <span className="badge-icon">💬</span>
             <span className="badge-text">Estamos aquí para ayudarte</span>
           </div>
@@ -110,7 +117,7 @@ const ContactPage = () => {
         <div className="contact-container">
           {/* Columna izquierda - Métodos de contacto rápido */}
           <div className="contact-methods">
-            <div className="method-card">
+            <div className="method-card floating" style={{animationDelay: '0s'}}>
               <div className="method-icon-wrapper whatsapp-icon">
                 <span className="method-icon">💚</span>
               </div>
@@ -132,7 +139,7 @@ const ContactPage = () => {
               </button>
             </div>
 
-            <div className="method-card">
+            <div className="method-card floating" style={{animationDelay: '0.2s'}}>
               <div className="method-icon-wrapper email-icon">
                 <span className="method-icon">📧</span>
               </div>

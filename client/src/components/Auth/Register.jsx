@@ -56,8 +56,8 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      {/* Fondo animado */}
-      <div className="auth-background">
+      {/* Fondo animado como LandingPage */}
+      <div className="animated-background">
         <div className="gradient-orb orb-1"></div>
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
@@ -85,7 +85,7 @@ const Register = () => {
         <div className="auth-container">
           <div className="auth-card">
             <div className="auth-hero">
-              <div className="auth-badge">
+              <div className="auth-badge floating">
                 <span className="badge-icon">✨</span>
                 <span className="badge-text">Únete a nosotros</span>
               </div>
