@@ -1,5 +1,6 @@
 /* ============================================
    LANDING PAGE - CSS ACTUALIZADO E INTERACTIVO
+   Nueva paleta de colores #3a1de1
    ============================================ */
 
 /* Reset y Variables */
@@ -10,13 +11,13 @@
 }
 
 :root {
-  /* Colores principales con #4424d4 */
-  --primary: #4424d4;
-  --primary-dark: #3318a8;
-  --primary-light: #6b4fdb;
-  --secondary: #764ba2;
-  --accent: #C98DFF;
-  --accent-light: #E5BFFF;
+  /* Nueva paleta de colores principal */
+  --primary: #3a1de1;
+  --primary-dark: #2d14b8;
+  --primary-light: #5f3ae7;
+  --secondary: #8356ef;
+  --accent: #a671f7;
+  --accent-light: #c98dff;
   
   /* Grises */
   --gray-50: #f9fafb;
@@ -31,7 +32,7 @@
   /* Gradientes */
   --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
   --gradient-accent: linear-gradient(135deg, var(--accent-light), var(--accent));
-  --gradient-hero: linear-gradient(135deg, rgba(68, 36, 212, 0.1), rgba(118, 75, 162, 0.1));
+  --gradient-hero: linear-gradient(135deg, rgba(58, 29, 225, 0.1), rgba(131, 86, 239, 0.1));
 }
 
 .landing-page {
@@ -41,7 +42,7 @@
 }
 
 /* ============================================
-   NAVBAR MEJORADA (de ContactPage)
+   NAVBAR MEJORADA
    ============================================ */
 
 .landing-navbar {
@@ -87,12 +88,12 @@
 .brand-logo {
   width: 50px;
   height: 50px;
-  filter: drop-shadow(0 4px 8px rgba(68, 36, 212, 0.3));
+  filter: drop-shadow(0 4px 8px rgba(58, 29, 225, 0.3));
   transition: filter 0.3s;
 }
 
 .navbar-brand:hover .brand-logo {
-  filter: drop-shadow(0 6px 12px rgba(68, 36, 212, 0.5));
+  filter: drop-shadow(0 6px 12px rgba(58, 29, 225, 0.5));
 }
 
 .brand-text {
@@ -162,11 +163,11 @@
 .nav-link-button.primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(68, 36, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(58, 29, 225, 0.3);
 }
 
 .nav-link-button.primary:hover {
-  box-shadow: 0 6px 20px rgba(68, 36, 212, 0.4);
+  box-shadow: 0 6px 20px rgba(58, 29, 225, 0.4);
   transform: translateY(-2px);
 }
 
@@ -371,11 +372,11 @@
 .cta-button.primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 8px 24px rgba(68, 36, 212, 0.3);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.3);
 }
 
 .cta-button.primary:hover {
-  box-shadow: 0 12px 32px rgba(68, 36, 212, 0.4);
+  box-shadow: 0 12px 32px rgba(58, 29, 225, 0.4);
   transform: translateY(-4px);
 }
 
@@ -535,13 +536,13 @@
 .feature-card.interactive:hover {
   transform: translateY(-8px);
   border-color: var(--primary);
-  box-shadow: 0 20px 40px rgba(68, 36, 212, 0.15);
+  box-shadow: 0 20px 40px rgba(58, 29, 225, 0.15);
 }
 
 .feature-card.active {
   transform: translateY(-8px);
   border-color: var(--primary);
-  box-shadow: 0 20px 40px rgba(68, 36, 212, 0.15);
+  box-shadow: 0 20px 40px rgba(58, 29, 225, 0.15);
 }
 
 .feature-icon-wrapper {
@@ -677,7 +678,7 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.25rem;
-  box-shadow: 0 4px 12px rgba(68, 36, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(58, 29, 225, 0.3);
 }
 
 .step-icon {
@@ -839,8 +840,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(68, 36, 212, 0.2), transparent 50%),
-              radial-gradient(circle at 70% 50%, rgba(118, 75, 162, 0.2), transparent 50%);
+  background: radial-gradient(circle at 30% 50%, rgba(58, 29, 225, 0.2), transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(131, 86, 239, 0.2), transparent 50%);
   pointer-events: none;
 }
 

@@ -1,157 +1,516 @@
-.login-container {
+/**
+ * Login.css - Diseño unificado con LandingPage
+ */
+
+/* Reset y Variables (compartidas con LandingPage) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Colores principales con #4424d4 */
+  --primary: #4424d4;
+  --primary-dark: #3318a8;
+  --primary-light: #6b4fdb;
+  --secondary: #764ba2;
+  --accent: #C98DFF;
+  --accent-light: #E5BFFF;
+  
+  /* Grises */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gradient-accent: linear-gradient(135deg, var(--accent-light), var(--accent));
+  --gradient-hero: linear-gradient(135deg, rgba(68, 36, 212, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.auth-page {
   min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========================================
+   FONDO ANIMADO (como LandingPage)
+   ======================================== */
+
+.auth-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float 20s infinite ease-in-out;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--primary-light), transparent);
+  top: -250px;
+  left: -250px;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--secondary), transparent);
+  bottom: -200px;
+  right: -200px;
+  animation-delay: -5s;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--accent), transparent);
+  top: 50%;
+  left: 50%;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* ========================================
+   HEADER (como LandingPage)
+   ======================================== */
+
+.auth-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-brand {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #E6C4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.auth-brand:hover {
+  transform: scale(1.05);
+}
+
+.auth-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.625rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   CONTENIDO PRINCIPAL
+   ======================================== */
+
+.auth-content {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
+  padding: 120px 2rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
-.login-card {
-  max-width: 28rem;
+.auth-container {
   width: 100%;
-  background: white;
-  padding: 2.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 480px;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-.login-header {
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   CARD PRINCIPAL (como LandingPage)
+   ======================================== */
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 2rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  padding: 3rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-primary);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ========================================
+   HERO SECTION (como ContactPage)
+   ======================================== */
+
+.auth-hero {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.login-title {
-  margin-top: 1.5rem;
-  font-size: 1.875rem;
-  font-weight: 800;
-  color: var(--gray-900);
-}
-
-.login-subtitle {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--gray-600);
-}
-
-.login-heading {
-  margin-top: 1rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--gray-700);
-}
-
-.login-form {
-  margin-top: 2rem;
-}
-
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: 0.375rem;
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   margin-bottom: 1.5rem;
-  position: relative;
-}
-
-.alert-error {
-  background-color: var(--red-50);
-  border: 1px solid var(--red-400);
-  color: var(--red-700);
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group:last-of-type {
-  margin-bottom: 0;
-}
-
-.form-input {
-  appearance: none;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--gray-300);
   font-size: 0.875rem;
-  color: var(--gray-900);
-  outline: none;
-  transition: all 0.15s ease;
-}
-
-.form-input:first-child {
-  border-radius: 0.375rem 0.375rem 0 0;
-}
-
-.form-input:last-child {
-  border-radius: 0 0 0.375rem 0.375rem;
-  border-top: none;
-}
-
-.form-input::placeholder {
-  color: var(--gray-500);
-}
-
-.form-input:focus {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 1px var(--primary-500);
-  z-index: 10;
-  position: relative;
-}
-
-.btn {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  margin-top: 1.5rem;
-}
-
-.btn-primary {
-  background-color: var(--primary-600);
+  font-weight: 600;
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-700);
+.badge-icon {
+  font-size: 1.25rem;
 }
 
-.btn-primary:focus {
+.auth-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #E6C4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.auth-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0;
+}
+
+/* ========================================
+   FORMULARIO (como ContactPage)
+   ======================================== */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+}
+
+.form-input {
+  padding: 0.875rem 1.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
-.btn:disabled {
-  opacity: 0.5;
+/* ========================================
+   BOTONES (como LandingPage)
+   ======================================== */
+
+.btn-submit {
+  padding: 1.125rem 2rem;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffffff 0%, #F3E0FF 100%);
+  color: var(--primary);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-submit:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffffff 0%, #E6C4FF 100%);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
 }
 
-.login-footer {
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.btn-icon {
+  font-size: 1.25rem;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 0.25rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divider span {
+  padding: 0 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Spinner */
+.spinner-small {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(68, 36, 212, 0.3);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Alertas */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+}
+
+.alert-icon {
+  font-size: 1.25rem;
+}
+
+/* Footer */
+.auth-footer {
   text-align: center;
   margin-top: 1.5rem;
 }
 
-.login-footer p {
-  font-size: 0.875rem;
-  color: var(--gray-600);
+.auth-footer p {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.login-link {
-  font-weight: 500;
-  color: var(--primary-600);
+.auth-link {
+  font-weight: 600;
+  color: white;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
-.login-link:hover {
-  color: var(--primary-500);
+.auth-link:hover {
+  color: #E6C4FF;
+  text-decoration: underline;
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .auth-header-container {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .auth-content {
+    padding: 100px 1.5rem 2rem;
+  }
+
+  .auth-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 2rem;
+  }
+
+  .auth-nav {
+    gap: 0.5rem;
+  }
+
+  .nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
 @media (max-width: 640px) {
-  .login-card {
-    padding: 2rem;
+  .auth-brand {
+    font-size: 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
   }
 }

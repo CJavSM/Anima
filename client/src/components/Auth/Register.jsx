@@ -55,142 +55,201 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <div className="register-header">
-          <h2 className="register-title">Ánima</h2>
-          <p className="register-subtitle">Música que refleja cómo te sentís</p>
-          <h3 className="register-heading">Crear Cuenta</h3>
-        </div>
+    <div className="auth-page">
+      {/* Fondo animado */}
+      <div className="auth-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
 
-        <form className="register-form" onSubmit={handleSubmit}>
-          {error && (
-            <div className="alert alert-error">
-              <span>{error}</span>
-            </div>
-          )}
-
-          {success && (
-            <div className="alert alert-success">
-              <span>{success}</span>
-            </div>
-          )}
-
-          <div className="form-field">
-            <label htmlFor="email" className="form-label">Email *</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="tu@email.com"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="username" className="form-label">Username *</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              placeholder="usuario123"
-              value={formData.username}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-field">
-              <label htmlFor="first_name" className="form-label">Nombre</label>
-              <input
-                id="first_name"
-                name="first_name"
-                type="text"
-                placeholder="Juan"
-                value={formData.first_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="last_name" className="form-label">Apellido</label>
-              <input
-                id="last_name"
-                name="last_name"
-                type="text"
-                placeholder="Pérez"
-                value={formData.last_name}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="password" className="form-label">Contraseña *</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <p className="form-hint">
-              Mínimo 8 caracteres, incluye mayúsculas, minúsculas, números y caracteres especiales
-            </p>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña *</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              placeholder="••••••••"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary"
-          >
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </button>
-
-          <div style={{ marginTop: 12 }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={async () => {
-                try {
-                  const url = await authService.getSpotifyAuthUrl();
-                  window.location.href = url;
-                } catch (e) {
-                  console.error('Error iniciando OAuth Spotify', e);
-                  alert('No se pudo iniciar registro con Spotify');
-                }
-              }}
-            >
-              Registrarse con Spotify
+      {/* Header con navegación */}
+      <header className="auth-header">
+        <div className="auth-header-container">
+          <h1 className="auth-brand" onClick={() => navigate('/')}>
+            Ánima
+          </h1>
+          <nav className="auth-nav">
+            <button onClick={() => navigate('/')} className="nav-btn">
+              Inicio
             </button>
-          </div>
+            <button onClick={() => navigate('/contact')} className="nav-btn">
+              Contacto
+            </button>
+          </nav>
+        </div>
+      </header>
 
-          <div className="register-footer">
-            <p>
-              ¿Ya tienes cuenta?{' '}
-              <Link to="/login" className="register-link">
-                Inicia sesión aquí
-              </Link>
-            </p>
+      {/* Contenido principal */}
+      <div className="auth-content">
+        <div className="auth-container">
+          <div className="auth-card">
+            <div className="auth-hero">
+              <div className="auth-badge">
+                <span className="badge-icon">✨</span>
+                <span className="badge-text">Únete a nosotros</span>
+              </div>
+              
+              <h2 className="auth-title">Ánima</h2>
+              <p className="auth-subtitle">Música que refleja cómo te sentís</p>
+              <h3 className="auth-heading">Crear Cuenta</h3>
+            </div>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              {error && (
+                <div className="alert alert-error">
+                  <span className="alert-icon">❌</span>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {success && (
+                <div className="alert alert-success">
+                  <span className="alert-icon">✅</span>
+                  <span>{success}</span>
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email *</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  className="form-input"
+                  placeholder="tu@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="username" className="form-label">Username *</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  className="form-input"
+                  placeholder="usuario123"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="first_name" className="form-label">Nombre</label>
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    className="form-input"
+                    placeholder="Juan"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="last_name" className="form-label">Apellido</label>
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    className="form-input"
+                    placeholder="Pérez"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">Contraseña *</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="form-input"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <p className="form-hint">
+                  Mínimo 8 caracteres, incluye mayúsculas, minúsculas, números y caracteres especiales
+                </p>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña *</label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  className="form-input"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-submit btn-primary"
+              >
+                <span className="btn-content">
+                  {loading ? (
+                    <>
+                      <span className="spinner-small"></span>
+                      <span>Registrando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Registrarse</span>
+                      <span className="btn-icon">🎉</span>
+                    </>
+                  )}
+                </span>
+              </button>
+
+              <div className="divider">
+                <span>o</span>
+              </div>
+
+              <button
+                type="button"
+                className="btn-submit btn-secondary"
+                onClick={async () => {
+                  try {
+                    const url = await authService.getSpotifyAuthUrl();
+                    window.location.href = url;
+                  } catch (e) {
+                    console.error('Error iniciando OAuth Spotify', e);
+                    alert('No se pudo iniciar registro con Spotify');
+                  }
+                }}
+              >
+                <span className="btn-content">
+                  <span>🎵</span>
+                  <span>Registrarse con Spotify</span>
+                </span>
+              </button>
+
+              <div className="auth-footer">
+                <p>
+                  ¿Ya tienes cuenta?{' '}
+                  <Link to="/login" className="auth-link">
+                    Inicia sesión aquí
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1,24 +1,73 @@
 /**
- * ContactPage - Diseño moderno con color #4424d4
+ * ContactPage - Diseño unificado con LandingPage
  */
+
+/* Reset y Variables (compartidas con LandingPage) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Colores principales con #4424d4 */
+  --primary: #4424d4;
+  --primary-dark: #3318a8;
+  --primary-light: #6b4fdb;
+  --secondary: #764ba2;
+  --accent: #C98DFF;
+  --accent-light: #E5BFFF;
+  
+  /* Grises */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gradient-accent: linear-gradient(135deg, var(--accent-light), var(--accent));
+  --gradient-hero: linear-gradient(135deg, rgba(68, 36, 212, 0.1), rgba(118, 75, 162, 0.1));
+}
 
 .contact-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #4424d4 0%, #8356EF 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   color: white;
+  position: relative;
+}
+
+/* Fondo animado como en LandingPage */
+.contact-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 50%, rgba(68, 36, 212, 0.2), transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(118, 75, 162, 0.2), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ========================================
-   HEADER
+   HEADER (similar a LandingPage navbar)
    ======================================== */
 
 .contact-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
 .contact-header-container {
@@ -58,7 +107,7 @@
   font-size: 1rem;
   font-weight: 500;
   padding: 0.625rem 1.5rem;
-  border-radius: 1rem;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -68,23 +117,32 @@
 }
 
 .nav-btn-primary {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--gradient-primary);
   border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(68, 36, 212, 0.3);
 }
 
 .nav-btn-primary:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--gradient-primary);
+  box-shadow: 0 6px 20px rgba(68, 36, 212, 0.4);
+  transform: translateY(-2px);
 }
 
 /* ========================================
-   HERO SECTION
+   CONTENIDO PRINCIPAL
    ======================================== */
 
 .contact-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 4rem;
+  padding: 120px 4rem 4rem; /* Espacio para header fijo */
+  position: relative;
+  z-index: 1;
 }
+
+/* ========================================
+   HERO SECTION (como LandingPage)
+   ======================================== */
 
 .contact-hero {
   text-align: center;
@@ -110,7 +168,7 @@
   padding: 0.625rem 1.25rem;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border-radius: 100px;
+  border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   margin-bottom: 2rem;
 }
@@ -154,7 +212,7 @@
 }
 
 /* ========================================
-   MÉTODOS DE CONTACTO
+   MÉTODOS DE CONTACTO (estilo LandingPage)
    ======================================== */
 
 .contact-methods {
@@ -166,22 +224,40 @@
 .method-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 1.5rem;
+  border-radius: 24px;
   border: 2px solid rgba(255, 255, 255, 0.15);
   padding: 2rem;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.method-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+
+.method-card:hover::before {
+  transform: scaleX(1);
 }
 
 .method-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px);
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .method-icon-wrapper {
   width: 70px;
   height: 70px;
-  border-radius: 1.25rem;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,10 +275,6 @@
 
 .email-icon {
   background: linear-gradient(135deg, #EA4335 0%, #C5221F 100%);
-}
-
-.info-icon {
-  background: linear-gradient(135deg, #4285F4 0%, #1967D2 100%);
 }
 
 .method-icon {
@@ -227,11 +299,11 @@
   width: 100%;
   padding: 0.875rem 1.5rem;
   border: none;
-  border-radius: 1.25rem;
+  border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -250,15 +322,11 @@
   color: white;
 }
 
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.25);
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 .method-info {
@@ -267,7 +335,8 @@
   gap: 0.5rem;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
+  border-radius: 12px;
+  margin-top: 1rem;
 }
 
 .info-label {
@@ -288,7 +357,7 @@
 }
 
 /* ========================================
-   FORMULARIO
+   FORMULARIO (estilo LandingPage)
    ======================================== */
 
 .contact-form-container {
@@ -357,7 +426,7 @@
   padding: 0.875rem 1.25rem;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
+  border-radius: 12px;
   font-size: 1rem;
   color: white;
   transition: all 0.3s ease;
@@ -382,19 +451,36 @@
   min-height: 150px;
 }
 
-/* Botón de envío */
+/* Botón de envío (estilo LandingPage) */
 .btn-submit {
   padding: 1.125rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #F3E0FF 100%);
-  color: #4424d4;
+  color: var(--primary);
   border: none;
-  border-radius: 1.5rem;
+  border-radius: 16px;
   font-size: 1.0625rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   margin-top: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-submit:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .btn-submit:hover:not(:disabled) {
@@ -409,25 +495,12 @@
   transform: none;
 }
 
-.btn-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.btn-icon {
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-}
-
 /* Spinner */
 .spinner-small {
   width: 1.25rem;
   height: 1.25rem;
   border: 2px solid rgba(68, 36, 212, 0.3);
-  border-top-color: #4424d4;
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -438,13 +511,13 @@
   }
 }
 
-/* Alertas */
+/* Alertas (estilo LandingPage) */
 .alert {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-radius: 1rem;
+  border-radius: 12px;
   margin-bottom: 1.5rem;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -467,7 +540,7 @@
 }
 
 /* ========================================
-   FOOTER
+   FOOTER (estilo LandingPage)
    ======================================== */
 
 .contact-footer {
@@ -475,6 +548,8 @@
   max-width: 1400px;
   margin: 4rem auto 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .footer-content {
@@ -487,17 +562,19 @@
 }
 
 /* ========================================
-   RESPONSIVE
+   RESPONSIVE (como LandingPage)
    ======================================== */
 
 @media (max-width: 1200px) {
   .contact-container {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
   .contact-methods {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
   }
 }
 
@@ -507,7 +584,7 @@
   }
 
   .contact-content {
-    padding: 3rem 1.5rem;
+    padding: 100px 1.5rem 3rem;
   }
 
   .contact-title {
@@ -541,5 +618,15 @@
 
   .contact-footer {
     padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-brand {
+    font-size: 1.5rem;
+  }
+
+  .contact-title {
+    font-size: 2rem;
   }
 }

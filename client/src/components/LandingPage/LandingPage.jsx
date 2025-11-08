@@ -34,7 +34,7 @@ const LandingPage = () => {
     {
       emoji: "📸",
       title: "Análisis de Emoción",
-      description: "Capturá tu expresión y descubrí qué emoción estás sintiendo en el momento",
+      description: "Capturá tu expresión tomándote una fotografía y descubrí qué emoción estás sintiendo en el momento",
       color: "#4424d4"
     },
     {
@@ -187,8 +187,7 @@ const LandingPage = () => {
           </div>
           
           <h1 className="hero-title">
-            Música que refleja
-            <span className="gradient-text"> cómo te sentís</span>
+            Música que refleja <span className="gradient-text">cómo te sentís</span>
           </h1>
           
           <p className="hero-subtitle">
@@ -209,22 +208,6 @@ const LandingPage = () => {
               <div className="stat-number">∞</div>
               <div className="stat-label">Playlists únicas</div>
             </div>
-          </div>
-
-          <div className="hero-cta">
-            <button 
-              className="cta-button primary pulse"
-              onClick={() => navigate('/register')}
-            >
-              <span>Comenzar Gratis</span>
-              <span className="button-shine"></span>
-            </button>
-            <button 
-              className="cta-button secondary"
-              onClick={() => document.getElementById('features').scrollIntoView({behavior: 'smooth'})}
-            >
-              Ver Demo
-            </button>
           </div>
 
           {/* Emotions preview interactivo */}
@@ -311,7 +294,7 @@ const LandingPage = () => {
               <div className="step-number">2</div>
               <div className="step-icon">🤖</div>
               <h3>Análisis inteligente</h3>
-              <p>AWS Rekognition detecta tu emoción con precisión del 95%</p>
+              <p>AWS Rekognition detecta tu emoción con precisión</p>
             </div>
 
             <div className="step-connector">
@@ -381,8 +364,7 @@ const LandingPage = () => {
               className="cta-button primary large pulse"
               onClick={() => navigate('/register')}
             >
-              <span>Comenzar Ahora - Es Gratis</span>
-              <span className="button-arrow">→</span>
+              <span>Comenzar Ahora</span>
             </button>
             <button 
               className="cta-button secondary large"

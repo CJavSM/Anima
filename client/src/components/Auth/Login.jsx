@@ -39,79 +39,140 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <h2 className="login-title">Ánima</h2>
-          <p className="login-subtitle">Música que refleja cómo te sentís</p>
-          <h3 className="login-heading">Iniciar Sesión</h3>
-        </div>
+    <div className="auth-page">
+      {/* Fondo animado */}
+      <div className="auth-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          {error && (
-            <div className="alert alert-error">
-              <span>{error}</span>
-            </div>
-          )}
-
-          <div className="form-group">
-            <input
-              id="username_or_email"
-              name="username_or_email"
-              type="text"
-              required
-              className="form-input"
-              placeholder="Username o Email"
-              value={formData.username_or_email}
-              onChange={handleChange}
-            />
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="form-input"
-              placeholder="Contraseña"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary"
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
-
-          <div style={{ marginTop: 12 }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={async () => {
-                try {
-                  const url = await authService.getSpotifyAuthUrl();
-                  window.location.href = url;
-                } catch (e) {
-                  console.error('Error iniciando OAuth Spotify', e);
-                  alert('No se pudo iniciar autenticación con Spotify');
-                }
-              }}
-            >
-              Iniciar con Spotify
+      {/* Header con navegación */}
+      <header className="auth-header">
+        <div className="auth-header-container">
+          <h1 className="auth-brand" onClick={() => navigate('/')}>
+            Ánima
+          </h1>
+          <nav className="auth-nav">
+            <button onClick={() => navigate('/')} className="nav-btn">
+              Inicio
             </button>
-          </div>
+            <button onClick={() => navigate('/contact')} className="nav-btn">
+              Contacto
+            </button>
+          </nav>
+        </div>
+      </header>
 
-          <div className="login-footer">
-            <p>
-              ¿No tienes cuenta?{' '}
-              <Link to="/register" className="login-link">
-                Regístrate aquí
-              </Link>
-            </p>
+      {/* Contenido principal */}
+      <div className="auth-content">
+        <div className="auth-container">
+          <div className="auth-card">
+            <div className="auth-hero">
+              <div className="auth-badge">
+                <span className="badge-icon">🔐</span>
+                <span className="badge-text">Acceso a tu cuenta</span>
+              </div>
+              
+              <h2 className="auth-title">Ánima</h2>
+              <p className="auth-subtitle">Música que refleja cómo te sentís</p>
+              <h3 className="auth-heading">Iniciar Sesión</h3>
+            </div>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              {error && (
+                <div className="alert alert-error">
+                  <span className="alert-icon">❌</span>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor="username_or_email" className="form-label">
+                  Username o Email
+                </label>
+                <input
+                  id="username_or_email"
+                  name="username_or_email"
+                  type="text"
+                  required
+                  className="form-input"
+                  placeholder="Ingresa tu username o email"
+                  value={formData.username_or_email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">
+                  Contraseña
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="form-input"
+                  placeholder="Ingresa tu contraseña"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-submit btn-primary"
+              >
+                <span className="btn-content">
+                  {loading ? (
+                    <>
+                      <span className="spinner-small"></span>
+                      <span>Iniciando sesión...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Iniciar Sesión</span>
+                      <span className="btn-icon">🚀</span>
+                    </>
+                  )}
+                </span>
+              </button>
+
+              <div className="divider">
+                <span>o</span>
+              </div>
+
+              <button
+                type="button"
+                className="btn-submit btn-secondary"
+                onClick={async () => {
+                  try {
+                    const url = await authService.getSpotifyAuthUrl();
+                    window.location.href = url;
+                  } catch (e) {
+                    console.error('Error iniciando OAuth Spotify', e);
+                    alert('No se pudo iniciar autenticación con Spotify');
+                  }
+                }}
+              >
+                <span className="btn-content">
+                  <span>🎵</span>
+                  <span>Iniciar con Spotify</span>
+                </span>
+              </button>
+
+              <div className="auth-footer">
+                <p>
+                  ¿No tienes cuenta?{' '}
+                  <Link to="/register" className="auth-link">
+                    Regístrate aquí
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
