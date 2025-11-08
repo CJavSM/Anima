@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../config/api';
 import './ContactPage.css';
 
 const ContactPage = () => {
@@ -31,17 +32,10 @@ const ContactPage = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/contact/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
+      // ✅ Usar la configuración de API en lugar de URL hardcodeada
+      const response = await api.post('/api/contact/send', formData);
+      
+      if (response.status === 200) {
         setSuccess(true);
         setFormData({
           name: '',
@@ -55,11 +49,14 @@ const ContactPage = () => {
           setSuccess(false);
         }, 5000);
       } else {
-        setError(data.detail || 'Error al enviar el mensaje');
+        setError(response.data?.detail || 'Error al enviar el mensaje');
       }
     } catch (err) {
-      setError('Error de conexión. Por favor intenta de nuevo.');
-      console.error('Error:', err);
+      console.error('Error enviando contacto:', err);
+      const errorMessage = err.response?.data?.detail || 
+                          err.response?.data?.message || 
+                          'Error de conexión. Por favor intenta de nuevo.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
