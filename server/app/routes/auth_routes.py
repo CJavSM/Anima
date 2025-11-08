@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+from typing import Optional
 
 router = APIRouter(
     prefix="/api/auth",
@@ -137,9 +138,9 @@ def spotify_login():
     description="Endpoint que maneja el callback de Spotify después de la autorización"
 )
 def spotify_callback(
-    code: str = Query(..., description="Código de autorización de Spotify"),
-    state: str = Query(None, description="Estado para prevenir CSRF"),
-    error: str = Query(None, description="Error si la autorización falló"),
+    code: Optional[str] = Query(None, description="Código de autorización de Spotify"),
+    state: Optional[str] = Query(None, description="Estado para prevenir CSRF"),
+    error: Optional[str] = Query(None, description="Error si la autorización falló"),
     db: Session = Depends(get_db)
 ):
     """
@@ -150,14 +151,21 @@ def spotify_callback(
     """
     frontend_redirect = os.getenv("SPOTIFY_FRONTEND_REDIRECT", "http://localhost:5173/auth/callback")
 
-    # Si hay error en la autorización
+    # Si Spotify devolvió un error (por ejemplo el usuario canceló), redirigir al frontend al login
     if error:
         return RedirectResponse(
             url=f"{frontend_redirect}?error={error}",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT
         )
 
-    # El frontend debe manejarlo porque necesita el token del usuario
+    # Si no llegó código de autorización, interpretarlo como cancelación y redirigir al login
+    if not code:
+        return RedirectResponse(
+            url=f"{frontend_redirect}?error=access_denied",
+            status_code=status.HTTP_307_TEMPORARY_REDIRECT
+        )
+
+    # El frontend debe manejar el caso de 'link:' en el state (vinculación)
     if state and state.startswith('link:'):
         # Pasar el code y state al frontend para que lo procese
         return RedirectResponse(
