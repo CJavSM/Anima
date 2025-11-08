@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth_routes, emotion_routes, music_routes, history_routes
+from app.routes import auth_routes, emotion_routes, music_routes, history_routes, spotify_routes
 import os
 from dotenv import load_dotenv
 from app.config.database import Base, engine
@@ -63,6 +63,7 @@ app.include_router(auth_routes.router)
 app.include_router(emotion_routes.router)
 app.include_router(music_routes.router)
 app.include_router(history_routes.router)
+app.include_router(spotify_routes.router)
 
 # Ruta raíz
 @app.get("/")

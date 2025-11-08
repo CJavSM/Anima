@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import historyService from '../../services/historyService';
+import spotifyService from '../../services/spotifyService';
+import { authService } from '../../services/authService';
 import emotionService from '../../services/emotionService';
 import musicService from '../../services/musicService';
 import './PlaylistsPage.css';
@@ -14,6 +16,8 @@ const PlaylistsPage = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [spotifyPlaylists, setSpotifyPlaylists] = useState([]);
+  const [showSpotifyModal, setShowSpotifyModal] = useState(false);
   
   // Filtros y paginación
   const [emotionFilter, setEmotionFilter] = useState('');
@@ -186,6 +190,45 @@ const PlaylistsPage = () => {
               <p className="panel-subtitle">
                 {playlists.length} playlist{playlists.length !== 1 ? 's' : ''} guardada{playlists.length !== 1 ? 's' : ''}
               </p>
+              {user?.spotify_connected ? (
+                <div style={{ marginLeft: 12 }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={async () => {
+                      setShowSpotifyModal(true);
+                      try {
+                        const res = await spotifyService.getUserPlaylists(50);
+                        if (res.success) setSpotifyPlaylists(res.data || res);
+                        else alert('No se pudieron obtener tus playlists de Spotify');
+                      } catch (e) {
+                        console.error(e);
+                        alert('Error al obtener playlists de Spotify');
+                      }
+                    }}
+                  >
+                    Ver Playlists en Spotify
+                  </button>
+                </div>
+              ) : (
+                user && (
+                  <div style={{ marginLeft: 12 }}>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={async () => {
+                        try {
+                          const url = await authService.getSpotifyLinkUrl();
+                          window.location.href = url;
+                        } catch (e) {
+                          console.error('Error iniciando enlace Spotify', e);
+                          alert('No se pudo iniciar el enlace con Spotify');
+                        }
+                      }}
+                    >
+                      Conectar con Spotify
+                    </button>
+                  </div>
+                )
+              )}
             </div>
 
             {/* Filtros */}
@@ -294,6 +337,36 @@ const PlaylistsPage = () => {
 
           {/* Panel Derecho - Detalles de Playlist */}
           <div className="playlist-details-panel">
+            {/* Modal simple para mostrar playlists de Spotify */}
+            {showSpotifyModal && (
+              <div className="spotify-modal-overlay" onClick={() => setShowSpotifyModal(false)}>
+                <div className="spotify-modal" onClick={(e) => e.stopPropagation()}>
+                  <h3>Tus playlists en Spotify</h3>
+                  <div style={{ maxHeight: 400, overflow: 'auto' }}>
+                    {spotifyPlaylists && spotifyPlaylists.length > 0 ? (
+                      spotifyPlaylists.map(pl => (
+                        <div key={pl.id} style={{ padding: 8, borderBottom: '1px solid #eee' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                              <strong>{pl.name}</strong>
+                              <div style={{ fontSize: 12 }}>{pl.tracks_total} canciones</div>
+                            </div>
+                            <div>
+                              <a href={pl.external_url} target="_blank" rel="noreferrer" className="btn btn-primary">Abrir en Spotify</a>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No se encontraron playlists en tu cuenta de Spotify</p>
+                    )}
+                  </div>
+                  <div style={{ marginTop: 12 }}>
+                    <button onClick={() => setShowSpotifyModal(false)} className="btn btn-secondary">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            )}
             {selectedPlaylist ? (
               <>
                 <div className="playlist-details-header" style={{ borderTopColor: getEmotionColor(selectedPlaylist.emotion) }}>
