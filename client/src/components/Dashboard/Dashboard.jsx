@@ -78,6 +78,14 @@ const Dashboard = () => {
   const getEmotionColor = (emotion) => emotionService.getEmotionColor(emotion);
   const translateEmotion = (emotion) => emotionService.translateEmotion(emotion);
 
+  const formatConfidence = (conf) => {
+    const v = conf === null || conf === undefined ? 0 : parseFloat(conf);
+    if (isNaN(v)) return '0%';
+    // If backend returns percentage (e.g., 90.04) keep it; if returns 0-1 normalize
+    if (v > 1) return `${v.toFixed(2)}%`;
+    return `${(v * 100).toFixed(2)}%`;
+  };
+
   // Formatear fecha para el gráfico
   const formatDateShort = (dateStr) => {
     const date = new Date(dateStr);
@@ -373,7 +381,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         <div className="activity-confidence">
-                          {Math.round((r.confidence ?? 0) * 100)}%
+                          {formatConfidence(r.confidence)}
                         </div>
                       </div>
                     ))}
