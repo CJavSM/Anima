@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import musicService from '../../services/musicService';
 import { authService } from '../../services/authService';
+import spotifyService from '../../services/spotifyService';
 import { useAuth } from '../../context/AuthContext';
 import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
@@ -21,6 +22,7 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
   const [playlistDescription, setPlaylistDescription] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveToSpotify, setSaveToSpotify] = useState(false);
 
   useEffect(() => {
     loadRecommendations();
@@ -131,11 +133,37 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
 
     if (result.success) {
       setSaveSuccess(true);
+
+      // Si el usuario está vinculado a Spotify y eligió guardar también allí,
+      // intentar crear la playlist en la cuenta de Spotify.
+      if (saveToSpotify && user && user.spotify_connected) {
+        try {
+          const trackIds = (recommendations?.tracks || []).map(t => t.id).filter(Boolean);
+          const spRes = await spotifyService.createPlaylist({
+            name: playlistData.playlist_name,
+            description: playlistData.description || '',
+            tracks: trackIds,
+            isPublic: false
+          });
+
+          if (!spRes.success) {
+            console.warn('No se pudo guardar en Spotify:', spRes.error);
+            alert('La playlist se guardó en Ánima pero no se pudo crear en Spotify.');
+          } else {
+            console.log('Playlist creada en Spotify:', spRes.data);
+          }
+        } catch (e) {
+          console.error('Error guardando en Spotify:', e);
+          alert('Ocurrió un error al guardar la playlist en Spotify');
+        }
+      }
+
       setTimeout(() => {
         setShowSaveDialog(false);
         setSaveSuccess(false);
         setPlaylistName('');
         setPlaylistDescription('');
+        setSaveToSpotify(false);
       }, 2000);
     } else {
       alert(`Error al guardar: ${result.error}`);
@@ -365,6 +393,19 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
                       rows={3}
                     />
                   </div>
+
+                  {user && user.spotify_connected && (
+                    <div className="save-dialog-field">
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={saveToSpotify}
+                          onChange={(e) => setSaveToSpotify(e.target.checked)}
+                        />{' '}
+                        Guardar también en mi cuenta de Spotify
+                      </label>
+                    </div>
+                  )}
 
                   <div className="save-dialog-actions">
                     <button 

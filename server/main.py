@@ -64,6 +64,7 @@ app.include_router(emotion_routes.router)
 app.include_router(music_routes.router)
 app.include_router(history_routes.router)
 app.include_router(contact_routes.router) 
+app.include_router(spotify_routes.router)
 
 # Ruta raíz
 @app.get("/")
