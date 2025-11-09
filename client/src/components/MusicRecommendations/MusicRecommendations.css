@@ -107,6 +107,44 @@
   transform: scale(1.1);
 }
 
+/* Botones en header del modal - NUEVO */
+.music-header .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.music-header .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.music-header .btn:hover::before {
+  left: 100%;
+}
+
+.music-header .btn-secondary {
+  background: linear-gradient(135deg, var(--gray-600), var(--gray-700));
+  color: white;
+  border: none;
+}
+
+.music-header .btn-secondary:hover {
+  background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 /* Music Info Section */
 .music-info {
   padding: 1.5rem 2rem;
@@ -136,6 +174,59 @@
   font-size: 1.125rem;
   color: var(--gray-900);
   font-weight: 700;
+}
+
+/* Botón para guardar playlist - MEJORADO */
+.stat-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-save-playlist {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.btn-save-playlist::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-save-playlist:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(58, 29, 225, 0.35);
+}
+
+.btn-save-playlist:hover::before {
+  left: 100%;
+}
+
+.btn-save-playlist:active {
+  transform: translateY(-2px);
 }
 
 /* Music Parameters */
@@ -205,7 +296,7 @@
 /* Track Item */
 .track-item {
   display: grid;
-  grid-template-columns: 40px 80px 1fr auto 60px;
+  grid-template-columns: 40px 80px 1fr auto 64px;
   align-items: center;
   gap: 1rem;
   padding: 0.75rem;
@@ -327,23 +418,47 @@
   font-weight: 600;
 }
 
+/* Botón de Spotify MEJORADO */
 .track-spotify-btn {
-  background: #1DB954;
+  background: linear-gradient(135deg, #1DB954, #1ed760);
   border: none;
-  border-radius: 50%;
-  width: 3rem;
+  border-radius: 0.75rem;
+  width: 4rem;
   height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: white;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.track-spotify-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
 }
 
 .track-spotify-btn:hover {
-  background: #1ed760;
-  transform: scale(1.1);
+  background: linear-gradient(135deg, #1ed760, #17a344);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(29, 185, 84, 0.4);
+}
+
+.track-spotify-btn:hover::before {
+  left: 100%;
+}
+
+.track-spotify-btn:active {
+  transform: translateY(0);
 }
 
 /* Loading State */
@@ -429,7 +544,7 @@
   .track-spotify-btn {
     grid-column: 4;
     grid-row: 1;
-    width: 2.5rem;
+    width: 3rem;
     height: 2.5rem;
   }
 
@@ -444,37 +559,6 @@
 /* 
 Agregar al archivo: client/src/components/MusicRecommendations/MusicRecommendations.css
 */
-
-/* Botón para guardar playlist */
-.stat-action {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-save-playlist {
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-save-playlist:hover {
-  background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-save-playlist:active {
-  transform: translateY(0);
-}
 
 /* Diálogo de guardar */
 .save-dialog-overlay {
