@@ -13,6 +13,24 @@ def setup_env(monkeypatch):
 
 def test_sanitize_username_and_generate_unique(monkeypatch):
     setup_env(monkeypatch)
+    # prevent SQLAlchemy mapper initialization by inserting a fake app.models.user module
+    class SimpleUser:
+        # class-level attributes used in query expressions
+        spotify_id = 'spotify_id'
+        email = 'email'
+        id = 'id'
+        username = 'username'
+
+        def __init__(self, **kw):
+            for k, v in kw.items():
+                setattr(self, k, v)
+            if not getattr(self, 'id', None):
+                self.id = kw.get('id', 'generated')
+
+    import sys
+    fake_user_module = types.SimpleNamespace(User=SimpleUser)
+    monkeypatch.setitem(sys.modules, 'app.models.user', fake_user_module)
+
     mod = importlib.reload(importlib.import_module('app.services.spotify_auth_service'))
     svc = mod.spotify_auth_service
 
@@ -102,3 +120,4 @@ def test_create_or_update_user_no_email_generates_temp(monkeypatch):
 
     newu = svc.create_or_update_user_from_spotify(spotify_data, token_data, db)
     assert '@spotify.temp' in newu.email
+
