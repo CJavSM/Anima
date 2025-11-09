@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, case
 from app.models.emotion_analysis import EmotionAnalysis, SavedPlaylist
 from app.schemas.history_schemas import (
     EmotionAnalysisCreate,
@@ -9,6 +9,7 @@ from app.schemas.history_schemas import (
 )
 from fastapi import HTTPException, status
 from typing import Optional, List, Dict, Any
+from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -279,11 +280,11 @@ class HistoryService:
                 detail="Error al eliminar la playlist"
             )
     
-    # ============ ESTADÍSTICAS ============
+    # ============ ESTADÍSTICAS AVANZADAS ============
     
     @staticmethod
     def get_user_stats(user_id: str, db: Session) -> Dict[str, Any]:
-        """Obtiene estadísticas del usuario"""
+        """Obtiene estadísticas completas del usuario incluyendo análisis semanal"""
         try:
             # Total de análisis
             total_analyses = db.query(func.count(EmotionAnalysis.id)).filter(
@@ -323,13 +324,99 @@ class HistoryService:
                 desc(EmotionAnalysis.created_at)
             ).limit(5).all()
             
+            # ============ NUEVAS ESTADÍSTICAS AVANZADAS ============
+            
+            # Fecha límite para última semana
+            week_ago = datetime.now() - timedelta(days=7)
+            
+            # Emociones de la última semana
+            weekly_emotions = db.query(
+                EmotionAnalysis.dominant_emotion,
+                func.count(EmotionAnalysis.id).label('count')
+            ).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.created_at >= week_ago
+            ).group_by(
+                EmotionAnalysis.dominant_emotion
+            ).all()
+            
+            weekly_breakdown = {emotion: count for emotion, count in weekly_emotions}
+            
+            # Análisis por día de la última semana
+            daily_analyses = db.query(
+                func.date(EmotionAnalysis.created_at).label('date'),
+                func.count(EmotionAnalysis.id).label('count')
+            ).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.created_at >= week_ago
+            ).group_by(
+                func.date(EmotionAnalysis.created_at)
+            ).order_by(
+                func.date(EmotionAnalysis.created_at)
+            ).all()
+            
+            daily_breakdown = {str(date): count for date, count in daily_analyses}
+            
+            # Clasificación positivas vs negativas
+            positive_emotions = ['HAPPY', 'CALM', 'SURPRISED']
+            negative_emotions = ['SAD', 'ANGRY', 'FEAR', 'DISGUSTED', 'CONFUSED']
+            
+            positive_count = db.query(func.count(EmotionAnalysis.id)).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.dominant_emotion.in_(positive_emotions)
+            ).scalar() or 0
+            
+            negative_count = db.query(func.count(EmotionAnalysis.id)).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.dominant_emotion.in_(negative_emotions)
+            ).scalar() or 0
+            
+            # Emociones positivas vs negativas por día (última semana)
+            daily_sentiment = db.query(
+                func.date(EmotionAnalysis.created_at).label('date'),
+                func.sum(
+                    case(
+                        (EmotionAnalysis.dominant_emotion.in_(positive_emotions), 1),
+                        else_=0
+                    )
+                ).label('positive_count'),
+                func.sum(
+                    case(
+                        (EmotionAnalysis.dominant_emotion.in_(negative_emotions), 1),
+                        else_=0
+                    )
+                ).label('negative_count')
+            ).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.created_at >= week_ago
+            ).group_by(
+                func.date(EmotionAnalysis.created_at)
+            ).order_by(
+                func.date(EmotionAnalysis.created_at)
+            ).all()
+            
+            sentiment_by_day = [
+                {
+                    'date': str(date),
+                    'positive': int(positive),
+                    'negative': int(negative)
+                }
+                for date, positive, negative in daily_sentiment
+            ]
+            
             return {
                 'total_analyses': total_analyses or 0,
                 'total_saved_playlists': total_playlists or 0,
                 'favorite_playlists_count': favorite_count or 0,
                 'most_common_emotion': most_common,
                 'emotions_breakdown': emotions_breakdown,
-                'recent_activity': recent_analyses
+                'recent_activity': recent_analyses,
+                # Nuevas estadísticas
+                'weekly_emotions': weekly_breakdown,
+                'daily_analyses': daily_breakdown,
+                'positive_count': positive_count,
+                'negative_count': negative_count,
+                'sentiment_by_day': sentiment_by_day
             }
             
         except Exception as e:
