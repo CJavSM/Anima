@@ -6,6 +6,91 @@ import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
 import './HistoryPage.css';
 
+// Componente confiable para emociones que combina emoji + SVG como fallback
+const EmotionIcon = ({ emotion, size = "1.5rem" }) => {
+  const emotionMap = {
+    'HAPPY': { emoji: '😊', color: '#10B981' },
+    'SAD': { emoji: '😢', color: '#3B82F6' },
+    'ANGRY': { emoji: '😠', color: '#EF4444' },
+    'CONFUSED': { emoji: '😕', color: '#F59E0B' },
+    'DISGUSTED': { emoji: '🤢', color: '#8B5CF6' },
+    'SURPRISED': { emoji: '😮', color: '#EC4899' },
+    'CALM': { emoji: '😌', color: '#14B8A6' },
+    'FEAR': { emoji: '😨', color: '#6366F1' }
+  };
+
+  const emotionData = emotionMap[emotion] || { emoji: '😐', color: '#6B7280' };
+  
+  return (
+    <span 
+      style={{ 
+        fontSize: size,
+        color: emotionData.color,
+        fontFamily: 'Arial, sans-serif',
+        display: 'inline-block',
+        lineHeight: 1
+      }}
+      role="img"
+      aria-label={emotion}
+    >
+      {emotionData.emoji}
+    </span>
+  );
+};
+
+// Componentes de íconos SVG
+const CameraIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M23 19C23 20.1046 22.1046 21 21 21H3C1.89543 21 1 20.1046 1 19V8C1 6.89543 1.89543 6 3 6H7L9 3H15L17 6H21C22.1046 6 23 6.89543 23 8V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="13" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const MusicIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 18V5L21 3V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const StarIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const TrendingUpIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <polyline points="17,6 23,6 23,12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const BarChartIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="12" y1="20" x2="12" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="18" y1="20" x2="18" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="6" y1="20" x2="6" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const HistoryPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -58,8 +143,6 @@ const HistoryPage = () => {
     }
   };
 
-  
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-GT', {
@@ -90,7 +173,9 @@ const HistoryPage = () => {
         {/* Header */}
         <div className="page-header">
           <div className="badge-modern floating">
-            <span className="badge-icon">📚</span>
+            <span className="badge-icon">
+              <BarChartIcon />
+            </span>
             <span>Historial Completo</span>
           </div>
           <h1 className="page-title-hero">
@@ -105,7 +190,9 @@ const HistoryPage = () => {
         {stats && (
           <div className="stats-grid">
             <div className="stat-card">
-              <div className="stat-icon">📸</div>
+              <div className="stat-icon">
+                <CameraIcon />
+              </div>
               <div className="stat-content">
                 <span className="stat-label">Total de Análisis</span>
                 <span className="stat-value">{stats.total_analyses}</span>
@@ -113,7 +200,9 @@ const HistoryPage = () => {
             </div>
             
             <div className="stat-card">
-              <div className="stat-icon">🎵</div>
+              <div className="stat-icon">
+                <MusicIcon />
+              </div>
               <div className="stat-content">
                 <span className="stat-label">Playlists Guardadas</span>
                 <span className="stat-value">{stats.total_saved_playlists}</span>
@@ -121,7 +210,9 @@ const HistoryPage = () => {
             </div>
             
             <div className="stat-card">
-              <div className="stat-icon">⭐</div>
+              <div className="stat-icon">
+                <StarIcon />
+              </div>
               <div className="stat-content">
                 <span className="stat-label">Favoritas</span>
                 <span className="stat-value">{stats.favorite_playlists_count}</span>
@@ -130,7 +221,9 @@ const HistoryPage = () => {
             
             {stats.most_common_emotion && (
               <div className="stat-card">
-                <div className="stat-icon">{getEmotionEmoji(stats.most_common_emotion)}</div>
+                <div className="stat-icon emotion-icon">
+                  <EmotionIcon emotion={stats.most_common_emotion} size="2rem" />
+                </div>
                 <div className="stat-content">
                   <span className="stat-label">Emoción Más Común</span>
                   <span className="stat-value">{translateEmotion(stats.most_common_emotion)}</span>
@@ -178,7 +271,10 @@ const HistoryPage = () => {
 
         {/* Lista de Análisis */}
         <div className="analyses-section">
-          <h2 className="section-title">Análisis Realizados</h2>
+          <h2 className="section-title">
+            <BarChartIcon />
+            Análisis Realizados
+          </h2>
           
           {loading ? (
             <div className="loading-state">
@@ -195,7 +291,9 @@ const HistoryPage = () => {
             </div>
           ) : analyses.length === 0 ? (
             <div className="empty-state">
-              <p className="empty-icon">📸</p>
+              <div className="empty-icon">
+                <CameraIcon />
+              </div>
               <p className="empty-text">
                 {emotionFilter 
                   ? `No hay análisis con la emoción "${translateEmotion(emotionFilter)}"` 
@@ -215,11 +313,11 @@ const HistoryPage = () => {
                         className="analysis-emotion-badge"
                         style={{ backgroundColor: getEmotionColor(analysis.dominant_emotion) }}
                       >
-                        {getEmotionEmoji(analysis.dominant_emotion)} {translateEmotion(analysis.dominant_emotion)}
+                        <EmotionIcon emotion={analysis.dominant_emotion} size="1rem" /> {translateEmotion(analysis.dominant_emotion)}
                       </span>
                       {analysis.has_saved_playlist && (
                         <span className="playlist-indicator" title="Tiene playlist guardada">
-                          🎵
+                          <MusicIcon />
                         </span>
                       )}
                     </div>
@@ -252,7 +350,7 @@ const HistoryPage = () => {
                               .slice(0, 3)
                               .map(([emotion, value]) => (
                                 <div key={emotion} className="emotion-mini-item">
-                                  <span>{getEmotionEmoji(emotion)}</span>
+                                  <span><EmotionIcon emotion={emotion} size="1rem" /></span>
                                   <span className="emotion-mini-value">{value.toFixed(1)}%</span>
                                 </div>
                               ))}
@@ -264,7 +362,9 @@ const HistoryPage = () => {
                       {analysis.photo_metadata && (
                         <div className="photo-metadata">
                           <div className="metadata-item">
-                            <span className="metadata-icon">👤</span>
+                            <span className="metadata-icon">
+                              <UserIcon />
+                            </span>
                             <span className="metadata-text">
                               {analysis.photo_metadata.faces_detected} rostro(s)
                             </span>
@@ -275,7 +375,7 @@ const HistoryPage = () => {
 
                     <div className="analysis-item-footer">
                       <span className="analysis-date">
-                        📅 {formatDate(analysis.analyzed_at)}
+                        <CalendarIcon /> {formatDate(analysis.analyzed_at)}
                       </span>
                     </div>
                   </div>
