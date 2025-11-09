@@ -385,12 +385,6 @@ const LandingPage = () => {
           </div>
           <div className="footer-links">
             <div className="footer-column">
-              <h4>Producto</h4>
-              <a href="#features">Características</a>
-              <a href="#how-it-works">Cómo Funciona</a>
-              <a href="#testimonials">Testimonios</a>
-            </div>
-            <div className="footer-column">
               <h4>Soporte</h4>
               <a href="/contact">Contacto</a>
               <a href="https://wa.me/50212345678" target="_blank" rel="noopener noreferrer">

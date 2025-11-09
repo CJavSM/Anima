@@ -38,6 +38,23 @@ const Login = () => {
     setLoading(false);
   };
 
+  const [spotifyLoading, setSpotifyLoading] = useState(false);
+
+  const handleSpotify = async () => {
+    if (spotifyLoading) return;
+    setSpotifyLoading(true);
+    try {
+      const url = await authService.getSpotifyAuthUrl();
+      if (!url) throw new Error('No se obtuvo la URL de Spotify');
+      // Redirigir a Spotify (replace/assign tiene el mismo efecto, assign mantiene en el historial)
+      window.location.href = url;
+    } catch (e) {
+      console.error('Error iniciando OAuth Spotify', e);
+      alert('No se pudo iniciar autenticación con Spotify');
+      setSpotifyLoading(false);
+    }
+  };
+
   return (
     <div className="auth-page">
       {/* Fondo animado como LandingPage */}
@@ -146,19 +163,21 @@ const Login = () => {
               <button
                 type="button"
                 className="btn-submit btn-secondary"
-                onClick={async () => {
-                  try {
-                    const url = await authService.getSpotifyAuthUrl();
-                    window.location.href = url;
-                  } catch (e) {
-                    console.error('Error iniciando OAuth Spotify', e);
-                    alert('No se pudo iniciar autenticación con Spotify');
-                  }
-                }}
+                onClick={handleSpotify}
+                disabled={spotifyLoading}
               >
                 <span className="btn-content">
-                  <span>🎵</span>
-                  <span>Iniciar con Spotify</span>
+                  {spotifyLoading ? (
+                    <>
+                      <span className="spinner-small"></span>
+                      <span>Redirigiendo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🎵</span>
+                      <span>Iniciar con Spotify</span>
+                    </>
+                  )}
                 </span>
               </button>
 
