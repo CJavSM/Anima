@@ -165,11 +165,26 @@ const Dashboard = () => {
     return `${(v * 100).toFixed(2)}%`;
   };
 
-  // Formatear fecha para el gráfico
+  // Formatear fecha para el gráfico (parsea como fecha local para evitar desplazamientos de zona horaria)
   const formatDateShort = (dateStr) => {
-    const date = new Date(dateStr);
+    if (!dateStr) return '—';
+    // Extraer la parte de fecha antes de la "T" para formatos ISO y evitar que Date interprete como UTC
+    const datePart = String(dateStr).split('T')[0];
+    const parts = datePart.split('-');
+    let dt;
+    if (parts.length === 3 && parts[0].length === 4) {
+      // Construir fecha local usando year, monthIndex, day para evitar shift por zona horaria
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      dt = new Date(year, month, day);
+    } else {
+      // Fallback para otros formatos
+      dt = new Date(dateStr);
+    }
+    if (isNaN(dt)) return '—';
     const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    return days[date.getDay()];
+    return days[dt.getDay()];
   };
 
   // Preparar datos para gráficos cuando existan stats
@@ -398,8 +413,31 @@ const Dashboard = () => {
                           {(() => {
                             const entries = Object.entries(stats.daily_analyses);
                             if (entries.length === 0) return '—';
-                            const maxDay = entries.reduce((max, curr) => curr[1] > max[1] ? curr : max);
-                            return formatDateShort(maxDay[0]);
+                            const maxDay = entries.reduce((max, curr) => (curr[1] > max[1] ? curr : max));
+
+                            // Parse date string reliably (handles "YYYY-MM-DD", "YYYY-MM-DDTHH:MM:SSZ", timestamps, etc.)
+                            const getDayNameFromDateStr = (dateStr) => {
+                              if (!dateStr) return '—';
+                              // Try to extract the date part before any time designator
+                              const datePart = String(dateStr).split('T')[0];
+                              const parts = datePart.split('-');
+                              let dt;
+                              if (parts.length === 3) {
+                                const year = parseInt(parts[0], 10);
+                                const month = parseInt(parts[1], 10) - 1;
+                                const day = parseInt(parts[2], 10);
+                                // Use new Date(year, monthIndex, day) to create a local date (avoids timezone shift)
+                                dt = new Date(year, month, day);
+                              } else {
+                                // Fallback to Date constructor for other formats
+                                dt = new Date(dateStr);
+                              }
+                              if (isNaN(dt)) return '—';
+                              const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                              return days[dt.getDay()];
+                            };
+
+                            return getDayNameFromDateStr(maxDay[0]);
                           })()}
                         </div>
                       </div>
@@ -418,9 +456,9 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {/* Grid de Gráficas - AHORA DESPUÉS DE RESUMEN Y ACTIVIDAD */}
+              {/* Grid de Gráficas */}
               <div className="charts-grid">
-                {/* NUEVA GRÁFICA: Evolución del Estado de Ánimo Semanal */}
+                {/* Evolución del Estado de Ánimo Semanal */}
                 {emotionalTrendData && chartsMounted && (
                   <div className="chart-card full-width">
                     <h3 className="section-title">
