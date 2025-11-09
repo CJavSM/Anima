@@ -46,14 +46,17 @@ const Login = () => {
     try {
       const url = await authService.getSpotifyAuthUrl();
       if (!url) throw new Error('No se obtuvo la URL de Spotify');
-      // Redirigir a Spotify (replace/assign tiene el mismo efecto, assign mantiene en el historial)
-      window.location.href = url;
+      // usar assign/replace es equivalente; assign mantiene historial
+      window.location.assign(url);
     } catch (e) {
       console.error('Error iniciando OAuth Spotify', e);
       alert('No se pudo iniciar autenticación con Spotify');
+    } finally {
+      // Si la app no llega a redirigir, garantizamos reset del estado
       setSpotifyLoading(false);
     }
   };
+
 
   return (
     <div className="auth-page">
