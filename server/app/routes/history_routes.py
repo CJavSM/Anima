@@ -124,7 +124,13 @@ def get_user_stats(
         'favorite_playlists_count': stats['favorite_playlists_count'],
         'most_common_emotion': stats['most_common_emotion'],
         'emotions_breakdown': stats['emotions_breakdown'],
-        'recent_activity': recent_activity
+        'recent_activity': recent_activity,
+        # Incluir datos extendidos para dashboard (gráficos)
+        'weekly_emotions': stats.get('weekly_emotions', {}),
+        'daily_analyses': stats.get('daily_analyses', {}),
+        'positive_count': stats.get('positive_count', 0),
+        'negative_count': stats.get('negative_count', 0),
+        'sentiment_by_day': stats.get('sentiment_by_day', [])
     }
 
 # ============ RUTAS DE PLAYLISTS ============
