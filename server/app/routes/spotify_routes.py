@@ -6,6 +6,7 @@ from app.middlewares.auth_middleware import get_current_active_user
 from app.config.database import get_db
 from app.models.user import User
 from app.services.spotify_user_service import spotify_user_service
+from fastapi import HTTPException
 
 router = APIRouter(
     prefix="/api/spotify",
@@ -53,9 +54,15 @@ def create_spotify_playlist(
     public = bool(payload.get('public', False))
 
     if not name:
-        return {
-            "error": "El campo 'name' es requerido"
-        }
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El campo 'name' es requerido")
+
+    # Validar tracks
+    if not isinstance(tracks, list) or len(tracks) == 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El campo 'tracks' debe ser una lista con al menos una canción")
+
+    # Asegurar que todos los elementos sean strings (ids o URIs)
+    if not all(isinstance(t, str) for t in tracks):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cada elemento en 'tracks' debe ser una cadena con el id o URI de la canción")
 
     result = spotify_user_service.create_playlist(
         user=current_user,
