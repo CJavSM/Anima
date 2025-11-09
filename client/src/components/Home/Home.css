@@ -1,6 +1,21 @@
 .home {
+  /* Palette variables shared with Landing/Auth/Contact */
+  --primary: #3a1de1;
+  --primary-dark: #2d14b8;
+  --primary-light: #5f3ae7;
+  --secondary: #8356ef;
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-900: #111827;
+
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gray-50);
+  color: var(--gray-900);
 }
 
 /* Navbar mejorado */
@@ -49,14 +64,70 @@
 .home-title {
   font-size: 2rem;
   font-weight: 800;
-  color: white;
+  color: var(--gray-900);
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .home-subtitle {
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--gray-600);
+}
+
+/* Small animation utilities */
+.fade-in {
+  animation: fadeInUp 0.7s ease-out both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Submit / primary button (like Landing/Contact) */
+.btn-submit {
+  padding: 1.25rem 2.5rem;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.3);
+  margin-top: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-submit:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(58, 29, 225, 0.4);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Analysis Container */
@@ -85,6 +156,23 @@
   width: 100%;
   max-width: 28rem;
 }
+
+/* Button utilities to match Landing/Contact */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary { background: var(--gray-100); color: var(--gray-700); border: none; padding: 0.6rem 1rem; border-radius: 12px; }
+
+.gradient-text{ background:var(--gradient-primary); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; display:inline-block; animation:gradient-shift 3s ease infinite; background-size:200% 200%; }
+
+@keyframes gradient-shift { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
 
 .upload-icon {
   font-size: 3rem;
