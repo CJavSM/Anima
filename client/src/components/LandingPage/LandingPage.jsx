@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
+import Logo from '../Shared/Logo';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -87,45 +88,7 @@ const LandingPage = () => {
       <nav className={`landing-navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-container">
           <div className="navbar-brand" onClick={() => navigate('/')}>
-            {/* Logo SVG */}
-            <svg className="brand-logo" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{stopColor:"#6366F1", stopOpacity:1}} />
-                  <stop offset="50%" style={{stopColor:"#EC4899", stopOpacity:1}} />
-                  <stop offset="100%" style={{stopColor:"#FBBF24", stopOpacity:1}} />
-                </linearGradient>
-                <filter id="logoGlow">
-                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-              
-              {/* Marco de cámara simplificado */}
-              <path d="M 90 90 L 90 120 M 90 90 L 120 90" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
-              <path d="M 310 90 L 310 120 M 310 90 L 280 90" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
-              <path d="M 90 310 L 90 280 M 90 310 L 120 310" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
-              <path d="M 310 310 L 310 280 M 310 310 L 280 310" stroke="url(#logoGrad)" strokeWidth="4" strokeLinecap="round" filter="url(#logoGlow)"/>
-              
-              {/* Rostro simplificado */}
-              <path d="M 140 195 Q 140 140 200 120 Q 260 140 260 195" fill="none" stroke="url(#logoGrad)" strokeWidth="3" filter="url(#logoGlow)"/>
-              <circle cx="170" cy="205" r="8" fill="url(#logoGrad)"/>
-              <circle cx="230" cy="205" r="8" fill="url(#logoGrad)"/>
-              <path d="M 175 260 Q 200 280 225 260" fill="none" stroke="url(#logoGrad)" strokeWidth="3" strokeLinecap="round"/>
-              
-              {/* Notas musicales */}
-              <g transform="translate(130, 120)" filter="url(#logoGlow)">
-                <circle cx="0" cy="0" r="5" fill="url(#logoGrad)"/>
-                <rect x="5" y="-15" width="2" height="15" fill="url(#logoGrad)"/>
-              </g>
-              <g transform="translate(270, 120)" filter="url(#logoGrad)">
-                <circle cx="0" cy="0" r="5" fill="url(#logoGrad)"/>
-                <rect x="5" y="-15" width="2" height="15" fill="url(#logoGrad)"/>
-              </g>
-            </svg>
+            <Logo width={48} height={48} className="brand-logo" title="Ánima" />
             <span className="brand-text">Ánima</span>
           </div>
 

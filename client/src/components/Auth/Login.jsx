@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
+import Logo from '../Shared/Logo';
 import { authService } from '../../services/authService';
 
 const Login = () => {
@@ -74,9 +75,10 @@ const Login = () => {
       {/* Header con navegación */}
       <header className="auth-header">
         <div className="auth-header-container">
-          <h1 className="auth-brand" onClick={() => navigate('/')}>
-            Ánima
-          </h1>
+          <div className="auth-brand" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Logo width={44} height={44} title="Ánima" />
+            <span className="auth-brand-text">Ánima</span>
+          </div>
           <nav className="auth-nav">
             <button onClick={() => navigate('/')} className="nav-btn">
               Inicio
