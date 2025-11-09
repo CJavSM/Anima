@@ -1040,3 +1040,134 @@
     max-height: 220px;
   }
 }
+
+emotions-distribution-section {
+  margin: 1.75rem 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 0.875rem;
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.emotions-distribution-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emotion-distribution-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.emotion-distribution-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.emotion-distribution-emoji {
+  font-size: 1.5rem;
+}
+
+.emotion-distribution-name {
+  font-weight: 600;
+  color: var(--gray-800);
+  min-width: 120px;
+  font-size: 1rem;
+}
+
+.emotion-distribution-count {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.emotion-distribution-bar-container {
+  width: 100%;
+  background: var(--gray-200);
+  border-radius: 9999px;
+  overflow: hidden;
+  height: 2rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.emotion-distribution-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 1rem;
+  transition: width 0.5s ease;
+  min-width: 60px;
+  border-radius: 9999px;
+}
+
+.emotion-distribution-percentage {
+  color: white;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive para distribución de emociones */
+@media (max-width: 768px) {
+  .emotions-distribution-section {
+    padding: 1.25rem;
+  }
+
+  .emotion-distribution-emoji {
+    font-size: 1.25rem;
+  }
+
+  .emotion-distribution-name {
+    min-width: 100px;
+    font-size: 0.9375rem;
+  }
+
+  .emotion-distribution-bar-container {
+    height: 1.75rem;
+  }
+
+  .emotion-distribution-percentage {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .emotions-distribution-section {
+    padding: 1rem;
+  }
+
+  .emotion-distribution-label {
+    gap: 0.5rem;
+  }
+
+  .emotion-distribution-emoji {
+    font-size: 1.125rem;
+  }
+
+  .emotion-distribution-name {
+    min-width: 90px;
+    font-size: 0.875rem;
+  }
+
+  .emotion-distribution-count {
+    font-size: 0.8125rem;
+  }
+
+  .emotion-distribution-bar-container {
+    height: 1.5rem;
+  }
+
+  .emotion-distribution-bar {
+    padding-right: 0.5rem;
+  }
+
+  .emotion-distribution-percentage {
+    font-size: 0.75rem;
+  }
+}

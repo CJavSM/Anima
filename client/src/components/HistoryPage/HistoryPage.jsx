@@ -130,43 +130,6 @@ const HistoryPage = () => {
           </div>
         )}
 
-        {/* Desglose de Emociones */}
-        {stats && stats.emotions_breakdown && Object.keys(stats.emotions_breakdown).length > 0 && (
-          <div className="emotions-chart-section">
-            <h2 className="section-title">Distribución de Emociones</h2>
-            <div className="emotions-chart">
-              {Object.entries(stats.emotions_breakdown)
-                .sort((a, b) => b[1] - a[1])
-                .map(([emotion, count]) => {
-                  const percentage = stats.total_analyses > 0 
-                    ? ((count / stats.total_analyses) * 100).toFixed(1) 
-                    : 0;
-                  
-                  return (
-                    <div key={emotion} className="emotion-chart-item">
-                      <div className="emotion-chart-label">
-                        <span className="emotion-chart-emoji">{getEmotionEmoji(emotion)}</span>
-                        <span className="emotion-chart-name">{translateEmotion(emotion)}</span>
-                        <span className="emotion-chart-count">{count} veces</span>
-                      </div>
-                      <div className="emotion-chart-bar-container">
-                        <div 
-                          className="emotion-chart-bar"
-                          style={{ 
-                            width: `${percentage}%`,
-                            backgroundColor: getEmotionColor(emotion)
-                          }}
-                        >
-                          <span className="emotion-chart-percentage">{percentage}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        )}
-
         {/* Filtros */}
         <div className="filters-section">
           <div className="filters-row">

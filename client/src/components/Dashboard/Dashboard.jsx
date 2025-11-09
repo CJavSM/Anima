@@ -198,7 +198,42 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-
+              {/* Distribución de Emociones Total */}
+              {stats && stats.emotions_breakdown && Object.keys(stats.emotions_breakdown).length > 0 && (
+                <div className="emotions-distribution-section">
+                  <h3 className="section-title">📊 Distribución de Emociones (Total Histórico)</h3>
+                  <div className="emotions-distribution-chart">
+                    {Object.entries(stats.emotions_breakdown)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([emotion, count]) => {
+                        const percentage = stats.total_analyses > 0 
+                          ? ((count / stats.total_analyses) * 100).toFixed(1) 
+                          : 0;
+                        
+                        return (
+                          <div key={emotion} className="emotion-distribution-item">
+                            <div className="emotion-distribution-label">
+                              <span className="emotion-distribution-emoji">{getEmotionEmoji(emotion)}</span>
+                              <span className="emotion-distribution-name">{translateEmotion(emotion)}</span>
+                              <span className="emotion-distribution-count">{count} veces</span>
+                            </div>
+                            <div className="emotion-distribution-bar-container">
+                              <div 
+                                className="emotion-distribution-bar"
+                                style={{ 
+                                  width: `${percentage}%`,
+                                  backgroundColor: getEmotionColor(emotion)
+                                }}
+                              >
+                                <span className="emotion-distribution-percentage">{percentage}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
               {/* Resumen de la Semana */}
               {stats && stats.daily_analyses && Object.keys(stats.daily_analyses).length > 0 && (
                 <div className="weekly-summary-section">
