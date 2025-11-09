@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import './ContactPage.css';
+import Sidebar from '../Shared/Sidebar';
+import useSidebar from '../../hooks/useSidebar';
 
 const ContactPage = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const ContactPage = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = useSidebar();
 
   
   const WHATSAPP_NUMBER = '50247483696'; 
@@ -81,6 +84,8 @@ const ContactPage = () => {
         <div className="gradient-orb orb-3"></div>
       </div>
 
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
       {/* Header con navegación */}
       <header className="contact-header">
         <div className="contact-header-container">
@@ -88,11 +93,17 @@ const ContactPage = () => {
             Ánima
           </h1>
           <nav className="contact-nav">
-            <button onClick={() => navigate('/')} className="nav-btn">
+            {/* Botón de menú para móvil */}
+            <button onClick={toggleSidebar} className="nav-btn mobile-only">
+              ☰
+            </button>
+            
+            {/* Botones normales para desktop */}
+            <button onClick={() => navigate('/')} className="nav-btn desktop-only">
               Inicio
             </button>
-            <button onClick={() => navigate('/login')} className="nav-btn nav-btn-primary">
-              Iniciar Sesión
+            <button onClick={() => navigate('/contact')} className="nav-btn desktop-only">
+              Contacto
             </button>
           </nav>
         </div>

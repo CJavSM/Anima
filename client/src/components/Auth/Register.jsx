@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 import './Register.css';
 import Logo from '../Shared/Logo';
 import { authService } from '../../services/authService';
+import Sidebar from '../Shared/Sidebar';
+import useSidebar from '../../hooks/useSidebar';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = useSidebar();
 
   const handleChange = (e) => {
     setFormData({
@@ -64,6 +67,8 @@ const Register = () => {
         <div className="gradient-orb orb-3"></div>
       </div>
 
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
       {/* Header con navegación */}
       <header className="auth-header">
         <div className="auth-header-container">
@@ -72,10 +77,16 @@ const Register = () => {
             <span className="auth-brand-text">Ánima</span>
           </div>
           <nav className="auth-nav">
-            <button onClick={() => navigate('/')} className="nav-btn">
+            {/* Botón de menú para móvil */}
+            <button onClick={toggleSidebar} className="nav-btn mobile-only">
+              ☰
+            </button>
+            
+            {/* Botones normales para desktop */}
+            <button onClick={() => navigate('/')} className="nav-btn desktop-only">
               Inicio
             </button>
-            <button onClick={() => navigate('/contact')} className="nav-btn">
+            <button onClick={() => navigate('/contact')} className="nav-btn desktop-only">
               Contacto
             </button>
           </nav>
