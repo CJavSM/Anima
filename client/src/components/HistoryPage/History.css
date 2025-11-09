@@ -1,9 +1,4 @@
-/*
-Archivo: client/src/components/HistoryPage/History.css
-Estilos para el componente de historial
-*/
 
-/* Uses centralized theme variables from styles/theme.css */
 
 .history-modal-overlay {
   position: fixed;

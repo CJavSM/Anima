@@ -499,10 +499,23 @@
   gap: 0.5rem;
 }
 
+/* Mejorar botones de acciones rápidas */
 .action-button.primary {
   background: var(--gradient-primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(58,29,225,0.3);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-button.primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
 }
 
 .action-button.primary:hover {
@@ -511,15 +524,16 @@
 }
 
 .action-button.secondary {
-  background: white;
-  color: var(--primary-600);
-  border: 2px solid var(--gray-200);
+  background: linear-gradient(135deg, white 0%, rgba(248, 250, 252, 1) 100%);
+  border: 2px solid var(--primary-200);
+  color: var(--primary-700);
+  position: relative;
+  overflow: hidden;
 }
 
 .action-button.secondary:hover {
+  background: linear-gradient(135deg, var(--primary-50) 0%, rgba(243, 240, 255, 1) 100%);
   border-color: var(--primary-400);
-  background: var(--gray-50);
-  transform: translateY(-2px);
 }
 
 /* Resumen Semanal - Optimizado */
@@ -828,10 +842,35 @@
   .sentiment-section,
   .daily-analysis-section,
   .weekly-emotions-section,
-  .recent-activity-section {
-    padding: 1.25rem;
+  .recent-activity-section,
+  .weekly-summary-section,
+  .daily-total-section,
+  .emotions-distribution-section {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.98) 0%, 
+      rgba(250, 250, 255, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(58, 29, 225, 0.08);
+    box-shadow: 0 12px 32px rgba(58, 29, 225, 0.1);
+    position: relative;
+    overflow: hidden;
   }
 
+  .sentiment-section::before,
+  .daily-analysis-section::before,
+  .weekly-emotions-section::before,
+  .recent-activity-section::before,
+  .weekly-summary-section::before,
+  .daily-total-section::before,
+  .emotions-distribution-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
   .sentiment-value {
     font-size: 1.875rem;
   }
@@ -918,6 +957,21 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Floating effect para elementos importantes */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.dashboard-card:hover {
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+/* Mejorar transiciones generales */
+.dashboard * {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .weekly-summary-section,

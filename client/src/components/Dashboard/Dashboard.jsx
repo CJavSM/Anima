@@ -149,6 +149,7 @@ const Dashboard = () => {
   })();
 
   return (
+    
     <div className="dashboard">
       {/* Fondo animado estilo Landing */}
       <div className="page-background">

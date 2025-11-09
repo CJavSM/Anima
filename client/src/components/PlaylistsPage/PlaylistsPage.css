@@ -1,8 +1,221 @@
-/* 
-Archivo: client/src/components/PlaylistsPage/PlaylistsPage.css
-Estilos para la página de playlists
-*/
+/* ============================== 
+   MEJORAS DE DISEÑO MODERNO
+   ============================== */
 
+/* Mejorar contenedor principal */
+.page-container {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(250, 250, 255, 0.05) 100%);
+  border-radius: 2rem;
+  backdrop-filter: blur(10px);
+  margin: 1rem;
+  box-shadow: 0 20px 40px rgba(58, 29, 225, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mejorar layout de dos paneles */
+.playlists-layout {
+  background: transparent;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Mejorar panel de playlists */
+.playlists-panel {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(250, 250, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(58, 29, 225, 0.08);
+  box-shadow: 0 16px 32px rgba(58, 29, 225, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.playlists-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+/* Mejorar panel de detalles */
+.playlist-details-panel {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(250, 250, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(58, 29, 225, 0.08);
+  box-shadow: 0 16px 32px rgba(58, 29, 225, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mejorar items de playlist */
+.playlist-list-item {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(248, 250, 252, 0.9) 100%);
+  border: 2px solid rgba(58, 29, 225, 0.06);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.playlist-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--gradient-primary);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.playlist-list-item:hover {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 1) 0%, 
+    rgba(243, 240, 255, 0.95) 100%);
+  border-color: var(--primary-300);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(58, 29, 225, 0.15);
+}
+
+.playlist-list-item:hover::before,
+.playlist-list-item.active::before {
+  transform: scaleY(1);
+}
+
+.playlist-list-item.active {
+  background: linear-gradient(135deg, 
+    rgba(58, 29, 225, 0.1) 0%, 
+    rgba(131, 86, 239, 0.1) 100%);
+  border-color: var(--primary-400);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.2);
+}
+
+/* Mejorar header de detalles */
+.playlist-details-header {
+  background: linear-gradient(135deg, 
+    rgba(58, 29, 225, 0.05) 0%, 
+    rgba(131, 86, 239, 0.05) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.playlist-details-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+/* Mejorar track rows */
+.track-row {
+  background: transparent;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.track-row:hover {
+  background: linear-gradient(135deg, 
+    rgba(58, 29, 225, 0.05) 0%, 
+    rgba(131, 86, 239, 0.03) 100%);
+  border-color: var(--primary-200);
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(58, 29, 225, 0.1);
+}
+
+/* Mejorar botones de acción */
+.action-btn-large {
+  background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
+  border: 2px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn-large::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.6s;
+}
+
+.action-btn-large:hover::before {
+  left: 100%;
+}
+
+.action-btn-large:hover {
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+  border-color: var(--primary-300);
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(58, 29, 225, 0.2);
+}
+
+.action-btn-large.delete:hover {
+  background: linear-gradient(135deg, var(--red-100), var(--red-50));
+  border-color: var(--red-300);
+}
+
+/* Efecto de cristal para filtros */
+.filters-compact {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Animaciones de entrada */
+.playlist-list-item {
+  animation: slideInLeft 0.6s ease-out both;
+}
+
+.playlist-list-item:nth-child(1) { animation-delay: 0.1s; }
+.playlist-list-item:nth-child(2) { animation-delay: 0.2s; }
+.playlist-list-item:nth-child(3) { animation-delay: 0.3s; }
+.playlist-list-item:nth-child(4) { animation-delay: 0.4s; }
+.playlist-list-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Estado sin selección mejorado */
+.no-selection {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(250, 250, 255, 0.8) 100%);
+  backdrop-filter: blur(10px);
+  border: 2px dashed var(--primary-200);
+  border-radius: 2rem;
+  margin: 2rem;
+}
 
 /* Layout de dos paneles */
 .playlists-layout {

@@ -1,3 +1,163 @@
+/* Ccontenedor principal */
+.page-container {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(250, 250, 255, 0.05) 100%);
+  border-radius: 2rem;
+  backdrop-filter: blur(10px);
+  margin: 1rem;
+  box-shadow: 0 20px 40px rgba(58, 29, 225, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mejorar header de página */
+.page-header {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(250, 250, 255, 0.9) 100%);
+  border-radius: 2rem 2rem 0 0;
+  padding: 3rem 2rem;
+  border-bottom: 1px solid rgba(58, 29, 225, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+/* Mejorar secciones principales */
+.emotions-chart-section,
+.analyses-section {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(250, 250, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(58, 29, 225, 0.08);
+  box-shadow: 0 12px 32px rgba(58, 29, 225, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.emotions-chart-section::before,
+.analyses-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+/* Mejorar items de análisis */
+.analysis-item {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(250, 250, 255, 0.9) 100%);
+  border: 2px solid rgba(58, 29, 225, 0.08);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.analysis-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--gradient-primary);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.analysis-item:hover::before {
+  transform: scaleY(1);
+}
+
+.analysis-item:hover {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 1) 0%, 
+    rgba(243, 240, 255, 0.95) 100%);
+  border-color: var(--primary-300);
+  box-shadow: 0 16px 32px rgba(58, 29, 225, 0.15);
+}
+
+/* Mejorar emotion badges */
+.analysis-emotion-badge {
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.analysis-emotion-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.analysis-item:hover .analysis-emotion-badge::before {
+  left: 100%;
+}
+
+/* Mejorar filtros */
+.filters-section {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(250, 250, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(58, 29, 225, 0.08);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.08);
+}
+
+.filter-select {
+  background: linear-gradient(135deg, white 0%, rgba(248, 250, 252, 1) 100%);
+  border: 2px solid var(--primary-200);
+  backdrop-filter: blur(10px);
+}
+
+.filter-select:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(58, 29, 225, 0.1);
+  background: white;
+}
+
+/* Animaciones suaves */
+.analysis-item {
+  animation: slideInUp 0.6s ease-out both;
+}
+
+.analysis-item:nth-child(1) { animation-delay: 0.1s; }
+.analysis-item:nth-child(2) { animation-delay: 0.2s; }
+.analysis-item:nth-child(3) { animation-delay: 0.3s; }
+.analysis-item:nth-child(4) { animation-delay: 0.4s; }
+.analysis-item:nth-child(5) { animation-delay: 0.5s; }
+.analysis-item:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .history-page {
   min-height: 100vh;
   background: var(--gray-50);

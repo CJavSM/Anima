@@ -156,7 +156,7 @@ const PlaylistsPage = () => {
       <SharedNavbar />
 
       {/* Contenido Principal */}
-      <div className="page-container">
+      <div className="page-container smooth-entrance">
         <div className="playlists-layout">
           {/* Panel Izquierdo - Lista de Playlists */}
           <div className="playlists-panel">
