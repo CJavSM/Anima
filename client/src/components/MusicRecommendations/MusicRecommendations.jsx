@@ -129,6 +129,26 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
       is_favorite: false
     };
 
+    // If user wants to save to Spotify but is NOT linked, start link flow.
+    if (saveToSpotify && user && !user.spotify_connected) {
+      try {
+        // Save pending playlist in localStorage so callback can finish the flow after linking
+        const pending = { ...playlistData };
+        localStorage.setItem('pending_playlist_save', JSON.stringify(pending));
+
+        // Redirect to Spotify link URL (backend will set state with 'link:' prefix)
+        const url = await authService.getSpotifyLinkUrl();
+        window.location.href = url;
+        return; // stop local flow — callback will handle saving after link
+      } catch (e) {
+        console.error('Error iniciando enlace con Spotify:', e);
+        alert('No se pudo iniciar el proceso de vinculación con Spotify');
+        setSaving(false);
+        return;
+      }
+    }
+
+    // Normal save to Ánima (and optionally to Spotify if already linked)
     const result = await historyService.savePlaylist(playlistData);
 
     if (result.success) {
@@ -394,7 +414,7 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
                     />
                   </div>
 
-                  {user && user.spotify_connected && (
+                  {user && (
                     <div className="save-dialog-field">
                       <label>
                         <input
