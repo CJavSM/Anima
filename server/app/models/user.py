@@ -33,6 +33,9 @@ class User(Base):
     
     # Relación con códigos de recuperación
     reset_codes = relationship("PasswordResetCode", back_populates="user", cascade="all, delete-orphan")
+    # Relación con análisis de emociones y playlists guardadas
+    emotion_analyses = relationship("EmotionAnalysis", back_populates="user", cascade="all, delete-orphan")
+    saved_playlists = relationship("SavedPlaylist", back_populates="user", cascade="all, delete-orphan")
     
     def get_display_name(self) -> str:
         """Obtiene el nombre para mostrar del usuario"""
