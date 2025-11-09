@@ -324,7 +324,7 @@ class HistoryService:
                 desc(EmotionAnalysis.created_at)
             ).limit(5).all()
             
-            # ============ NUEVAS ESTADÍSTICAS AVANZADAS ============
+            
             
             # Fecha límite para última semana
             week_ago = datetime.now() - timedelta(days=7)
