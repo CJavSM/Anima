@@ -231,6 +231,57 @@ const updateProfile = async (payload) => {
   }
 };
 
+// Agregar al final del objeto authService, antes de la exportación:
+
+const requestPasswordReset = async (email) => {
+  console.log('🔄 [AuthService] Solicitando reset de contraseña para:', email);
+  
+  try {
+    const { data } = await api.post('/api/auth/forgot-password', { email });
+    console.log('✅ [AuthService] Código de reset enviado exitosamente');
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ [AuthService] Error enviando código:', error);
+    
+    if (error.code === 'ERR_NETWORK') {
+      throw new Error('No se pudo conectar con el servidor.');
+    }
+    
+    if (error.response?.status === 404) {
+      throw new Error('No existe una cuenta con ese email.');
+    }
+    
+    if (error.response?.status === 400) {
+      throw new Error(error.response.data?.detail || 'Email inválido.');
+    }
+    
+    return { success: false, error: error.response?.data?.detail || 'Error al enviar código' };
+  }
+};
+
+const resetPassword = async ({ email, code, new_password }) => {
+  console.log('🔑 [AuthService] Reseteando contraseña para:', email);
+  
+  try {
+    const { data } = await api.post('/api/auth/reset-password', {
+      email,
+      code,
+      new_password
+    });
+    console.log('✅ [AuthService] Contraseña cambiada exitosamente');
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ [AuthService] Error cambiando contraseña:', error);
+    
+    if (error.response?.status === 400) {
+      throw new Error(error.response.data?.detail || 'Código inválido o expirado.');
+    }
+    
+    return { success: false, error: error.response?.data?.detail || 'Error al cambiar contraseña' };
+  }
+};
+
+// Actualizar la exportación para incluir las nuevas funciones:
 export const authService = {
   login,
   register,
@@ -243,4 +294,6 @@ export const authService = {
   exchangeSpotifyCode,
   disconnectSpotify,
   updateProfile,
+  requestPasswordReset,  // AGREGAR
+  resetPassword,         // AGREGAR
 };

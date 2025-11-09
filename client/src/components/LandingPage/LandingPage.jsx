@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 import Logo from '../Shared/Logo';
+import Sidebar from '../Shared/Sidebar';
+import useSidebar from '../../hooks/useSidebar';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ const LandingPage = () => {
   const [activeFeature, setActiveFeature] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = useSidebar();
 
   // Detectar scroll para navbar
   useEffect(() => {
@@ -92,7 +95,7 @@ const LandingPage = () => {
             <span className="brand-text">Ánima</span>
           </div>
 
-          <button className="navbar-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="navbar-toggle" onClick={toggleSidebar}>
             {isMenuOpen ? '✕' : '☰'}
           </button>
 
@@ -140,7 +143,13 @@ const LandingPage = () => {
           }}
         />
       </div>
-
+      
+      {/* Sidebar para móvil */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={closeSidebar}
+      />
+      
       {/* Hero Section Mejorado */}
       <section className="hero-section">
         <div className="hero-content">

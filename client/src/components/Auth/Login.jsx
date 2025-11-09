@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 import Logo from '../Shared/Logo';
 import { authService } from '../../services/authService';
+import Sidebar from '../Shared/Sidebar';
+import useSidebar from '../../hooks/useSidebar';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = useSidebar();
 
   const handleChange = (e) => {
     setFormData({
@@ -72,6 +75,8 @@ const Login = () => {
         <div className="gradient-orb orb-3"></div>
       </div>
 
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
       {/* Header con navegación */}
       <header className="auth-header">
         <div className="auth-header-container">
@@ -80,10 +85,16 @@ const Login = () => {
             <span className="auth-brand-text">Ánima</span>
           </div>
           <nav className="auth-nav">
-            <button onClick={() => navigate('/')} className="nav-btn">
+            {/* Botón de menú para móvil */}
+            <button onClick={toggleSidebar} className="nav-btn mobile-only">
+              ☰
+            </button>
+            
+            {/* Botones normales para desktop */}
+            <button onClick={() => navigate('/')} className="nav-btn desktop-only">
               Inicio
             </button>
-            <button onClick={() => navigate('/contact')} className="nav-btn">
+            <button onClick={() => navigate('/contact')} className="nav-btn desktop-only">
               Contacto
             </button>
           </nav>
@@ -127,6 +138,9 @@ const Login = () => {
                   value={formData.username_or_email}
                   onChange={handleChange}
                 />
+                <Link to="/forgot-password" className="auth-link" style={{fontSize: '0.875rem', marginTop: '0.5rem', display: 'block', textAlign: 'right'}}>
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
 
               <div className="form-group">

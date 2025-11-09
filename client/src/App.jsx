@@ -11,6 +11,9 @@ import Profile from './components/Profile/Profile';
 import HistoryPage from './components/HistoryPage/HistoryPage';
 import PlaylistsPage from './components/PlaylistsPage/PlaylistsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ForgotPassword from './components/Auth/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword';
+
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           {/* Backwards-compatible redirect: some Spotify apps may be configured with /callback */}
           <Route path="/callback" element={<Navigate to="/auth/callback" replace />} />
+
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           
           {/* Rutas protegidas */}
           <Route

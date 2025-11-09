@@ -323,3 +323,29 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Agregar al final del archivo */
+
+/* Utilidades para sidebar responsiva */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+  
+  /* Ocultar navbar-menu en móvil cuando se usa sidebar */
+  .navbar-menu {
+    display: none !important;
+  }
+}
