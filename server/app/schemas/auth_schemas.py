@@ -60,7 +60,6 @@ class MessageResponse(BaseModel):
     message: str
     detail: Optional[str] = None
 
-
 class UpdateUserRequest(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     email: Optional[EmailStr] = None
@@ -74,3 +73,41 @@ class UpdateUserRequest(BaseModel):
         if not re.match("^[a-zA-Z0-9_-]+$", v):
             raise ValueError('El username solo puede contener letras, números, guiones y guiones bajos')
         return v
+
+
+# ============================================
+# SCHEMAS PARA RECUPERACIÓN DE CONTRASEÑA
+# ============================================
+
+class ForgotPasswordRequest(BaseModel):
+    """Request para solicitar recuperación de contraseña"""
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    """Request para resetear contraseña con código"""
+    email: EmailStr
+    # pydantic v2 uses `pattern` instead of `regex`
+    code: str = Field(..., min_length=6, max_length=6, pattern="^[0-9]{6}$")
+    new_password: str = Field(..., min_length=8, max_length=100)
+    
+    @validator('new_password')
+    def password_strength(cls, v):
+        if not re.search("[a-z]", v):
+            raise ValueError('La contraseña debe contener al menos una letra minúscula')
+        if not re.search("[A-Z]", v):
+            raise ValueError('La contraseña debe contener al menos una letra mayúscula')
+        if not re.search("[0-9]", v):
+            raise ValueError('La contraseña debe contener al menos un número')
+        if not re.search("[!@#$%^&*(),.?\":{}|<>]", v):
+            raise ValueError('La contraseña debe contener al menos un carácter especial')
+        return v
+
+class ForgotPasswordResponse(BaseModel):
+    """Respuesta para solicitud de código de recuperación"""
+    message: str
+    detail: str
+
+class ResetPasswordResponse(BaseModel):
+    """Respuesta para cambio exitoso de contraseña"""
+    message: str
+    detail: str

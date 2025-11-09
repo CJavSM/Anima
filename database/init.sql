@@ -140,7 +140,6 @@ ORDER BY ea.created_at DESC;
 -- Fecha: 2025-01-XX
 -- Descripción: Permite autenticación con Spotify y guardar playlists en cuentas de Spotify
 
-
 -- Crear índice para búsquedas por spotify_id
 CREATE INDEX IF NOT EXISTS idx_users_spotify_id ON users(spotify_id);
 
@@ -150,7 +149,45 @@ COMMENT ON COLUMN users.spotify_access_token IS 'Token de acceso de Spotify (enc
 COMMENT ON COLUMN users.spotify_refresh_token IS 'Token de refresco de Spotify (encriptado)';
 COMMENT ON COLUMN users.spotify_connected IS 'Indica si el usuario tiene conectada su cuenta de Spotify';
 
-
--- Comentarios
 COMMENT ON TABLE saved_playlists IS 'Playlists guardadas por los usuarios';
 COMMENT ON VIEW user_history IS 'Vista consolidada del historial de análisis y playlists del usuario';
+
+-- ============================================
+-- TABLA PARA CÓDIGOS DE RECUPERACIÓN DE CONTRASEÑA
+-- ============================================
+
+-- Tabla para códigos de recuperación de contraseña
+CREATE TABLE IF NOT EXISTS password_reset_codes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    code VARCHAR(6) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para password_reset_codes
+CREATE INDEX IF NOT EXISTS idx_password_reset_codes_user_id ON password_reset_codes(user_id);
+CREATE INDEX IF NOT EXISTS idx_password_reset_codes_email ON password_reset_codes(email);
+CREATE INDEX IF NOT EXISTS idx_password_reset_codes_code ON password_reset_codes(code);
+CREATE INDEX IF NOT EXISTS idx_password_reset_codes_expires_at ON password_reset_codes(expires_at);
+CREATE INDEX IF NOT EXISTS idx_password_reset_codes_is_used ON password_reset_codes(is_used);
+
+-- Comentarios
+COMMENT ON TABLE password_reset_codes IS 'Códigos de recuperación de contraseña temporales';
+COMMENT ON COLUMN password_reset_codes.code IS 'Código de 6 dígitos enviado por email';
+COMMENT ON COLUMN password_reset_codes.expires_at IS 'Fecha y hora de expiración del código';
+COMMENT ON COLUMN password_reset_codes.is_used IS 'Indica si el código ya fue utilizado';
+
+-- Función para limpiar códigos expirados (opcional, para limpieza automática)
+CREATE OR REPLACE FUNCTION cleanup_expired_reset_codes()
+RETURNS void AS $$
+BEGIN
+    DELETE FROM password_reset_codes 
+    WHERE expires_at < CURRENT_TIMESTAMP - INTERVAL '1 day';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Comentario sobre limpieza
+COMMENT ON FUNCTION cleanup_expired_reset_codes() IS 'Función para limpiar códigos de recuperación expirados (ejecutar periódicamente)';

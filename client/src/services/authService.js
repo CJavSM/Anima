@@ -154,8 +154,6 @@ const logout = () => {
  */
 const getSpotifyAuthUrl = async () => {
   try {
-    // skipAuth: true evita que el interceptor adjunte Authorization
-    // (el endpoint de Spotify no requiere token y debe ser público)
     const { data } = await api.get('/api/auth/spotify/login', { skipAuth: true });
     return data.authorization_url;
   } catch (error) {
@@ -166,8 +164,6 @@ const getSpotifyAuthUrl = async () => {
 
 const getSpotifyLinkUrl = async () => {
   try {
-    // Este endpoint requiere usuario autenticado (vincular a cuenta existente).
-    // No pasar skipAuth para que el interceptor adjunte el token si existe.
     const { data } = await api.get('/api/auth/spotify/link');
     if (data.error) throw new Error(data.error);
     return data.authorization_url;
@@ -179,9 +175,7 @@ const getSpotifyLinkUrl = async () => {
 
 const linkSpotify = async (code) => {
   try {
-    // El endpoint espera el código como query param
     const { data } = await api.post(`/api/auth/spotify/link/callback?code=${encodeURIComponent(code)}`);
-    // Devuelve TokenResponse con nuevo access_token y user
     saveSession({ access_token: data.access_token, user: data.user });
     return data;
   } catch (error) {
@@ -192,9 +186,7 @@ const linkSpotify = async (code) => {
 
 const exchangeSpotifyCode = async (code) => {
   try {
-    // Intercambiar el code por token en el backend y evitar seguir redirects
     const { data } = await api.post(`/api/auth/spotify/exchange`, { code }, { skipAuth: true });
-    // Guardar sesión si viene el token
     if (data?.access_token) saveSession({ access_token: data.access_token, user: data.user });
     return data;
   } catch (error) {
@@ -216,7 +208,6 @@ const disconnectSpotify = async () => {
 const updateProfile = async (payload) => {
   try {
     const { data } = await api.patch('/api/auth/me', payload);
-    // Guardar usuario actualizado en localStorage si viene
     try {
       if (data) localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(data));
     } catch (e) {
@@ -225,13 +216,14 @@ const updateProfile = async (payload) => {
     return data;
   } catch (error) {
     console.error('❌ [AuthService] Error actualizando perfil:', error);
-    // Normalizar errores si vienen con detalle
     if (error.response?.data?.detail) throw new Error(error.response.data.detail);
     throw error;
   }
 };
 
-// Agregar al final del objeto authService, antes de la exportación:
+// ============================================
+// RECUPERACIÓN DE CONTRASEÑA MEJORADA
+// ============================================
 
 const requestPasswordReset = async (email) => {
   console.log('🔄 [AuthService] Solicitando reset de contraseña para:', email);
@@ -243,19 +235,61 @@ const requestPasswordReset = async (email) => {
   } catch (error) {
     console.error('❌ [AuthService] Error enviando código:', error);
     
+    // Manejar diferentes tipos de errores
     if (error.code === 'ERR_NETWORK') {
-      throw new Error('No se pudo conectar con el servidor.');
+      return { 
+        success: false, 
+        error: 'No se pudo conectar con el servidor. Verifica tu conexión a internet y que el servidor esté funcionando.' 
+      };
+    }
+    
+    if (error.code === 'ECONNABORTED') {
+      return { 
+        success: false, 
+        error: 'La petición tardó demasiado tiempo. Verifica tu conexión e intenta de nuevo.' 
+      };
     }
     
     if (error.response?.status === 404) {
-      throw new Error('No existe una cuenta con ese email.');
+      return { 
+        success: false, 
+        error: 'No existe una cuenta registrada con ese email. Verifica que esté escrito correctamente.' 
+      };
     }
     
     if (error.response?.status === 400) {
-      throw new Error(error.response.data?.detail || 'Email inválido.');
+      const detail = error.response.data?.detail || '';
+      if (detail.includes('Spotify')) {
+        return { 
+          success: false, 
+          error: 'Esta cuenta solo puede acceder con Spotify. No tiene contraseña para recuperar.' 
+        };
+      }
+      return { 
+        success: false, 
+        error: detail || 'Email inválido. Verifica el formato.' 
+      };
     }
     
-    return { success: false, error: error.response?.data?.detail || 'Error al enviar código' };
+    if (error.response?.status === 403) {
+      return { 
+        success: false, 
+        error: 'La cuenta está inactiva. Contacta al soporte técnico.' 
+      };
+    }
+    
+    if (error.response?.status >= 500) {
+      return { 
+        success: false, 
+        error: 'Error del servidor. Por favor intenta más tarde.' 
+      };
+    }
+    
+    // Error genérico
+    return { 
+      success: false, 
+      error: error.response?.data?.detail || 'Error inesperado. Intenta de nuevo o contacta al soporte.' 
+    };
   }
 };
 
@@ -273,11 +307,75 @@ const resetPassword = async ({ email, code, new_password }) => {
   } catch (error) {
     console.error('❌ [AuthService] Error cambiando contraseña:', error);
     
-    if (error.response?.status === 400) {
-      throw new Error(error.response.data?.detail || 'Código inválido o expirado.');
+    // Manejar diferentes tipos de errores
+    if (error.code === 'ERR_NETWORK') {
+      return { 
+        success: false, 
+        error: 'No se pudo conectar con el servidor. Verifica tu conexión.' 
+      };
     }
     
-    return { success: false, error: error.response?.data?.detail || 'Error al cambiar contraseña' };
+    if (error.code === 'ECONNABORTED') {
+      return { 
+        success: false, 
+        error: 'La petición tardó demasiado tiempo. Intenta de nuevo.' 
+      };
+    }
+    
+    if (error.response?.status === 400) {
+      const detail = error.response.data?.detail || '';
+      if (detail.includes('código') || detail.includes('inválido') || detail.includes('expirado')) {
+        return { 
+          success: false, 
+          error: 'El código es incorrecto o ha expirado. Solicita un nuevo código.' 
+        };
+      }
+      if (detail.includes('contraseña')) {
+        return { 
+          success: false, 
+          error: 'La nueva contraseña no cumple los requisitos: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial.' 
+        };
+      }
+      return { 
+        success: false, 
+        error: detail || 'Datos inválidos. Verifica la información ingresada.' 
+      };
+    }
+    
+    if (error.response?.status === 404) {
+      return { 
+        success: false, 
+        error: 'Usuario no encontrado. Verifica que el email sea correcto.' 
+      };
+    }
+    
+    if (error.response?.status === 422) {
+      const detail = error.response.data?.detail || '';
+      if (Array.isArray(detail)) {
+        const messages = detail.map(err => err.msg || err.message).join(', ');
+        return { 
+          success: false, 
+          error: `Error de validación: ${messages}` 
+        };
+      }
+      return { 
+        success: false, 
+        error: 'Error de validación. Verifica que el código tenga 6 dígitos y la contraseña sea segura.' 
+      };
+    }
+    
+    if (error.response?.status >= 500) {
+      return { 
+        success: false, 
+        error: 'Error del servidor. Intenta más tarde.' 
+      };
+    }
+    
+    // Error genérico
+    return { 
+      success: false, 
+      error: error.response?.data?.detail || 'Error inesperado al cambiar contraseña. Intenta de nuevo.' 
+    };
   }
 };
 
@@ -294,6 +392,6 @@ export const authService = {
   exchangeSpotifyCode,
   disconnectSpotify,
   updateProfile,
-  requestPasswordReset,  // AGREGAR
-  resetPassword,         // AGREGAR
+  requestPasswordReset,  
+  resetPassword,         
 };

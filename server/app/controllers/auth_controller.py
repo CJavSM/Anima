@@ -1,6 +1,14 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.auth_schemas import UserRegister, UserLogin, TokenResponse, UserResponse, MessageResponse
+from app.schemas.auth_schemas import (
+    UserRegister,
+    UserLogin,
+    TokenResponse,
+    UserResponse,
+    MessageResponse,
+    ForgotPasswordResponse,
+    ResetPasswordResponse,
+)
 from app.services.auth_service import AuthService
 from app.services.spotify_auth_service import spotify_auth_service
 from app.models.user import User
@@ -265,4 +273,44 @@ class AuthController:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al actualizar usuario: {str(e)}"
+            )
+        
+# ============================================
+# MÉTODOS PARA RECUPERACIÓN DE CONTRASEÑA
+# ============================================
+    
+    @staticmethod
+    def request_password_reset(email: str, db: Session) -> ForgotPasswordResponse:
+        """Solicita un código de recuperación de contraseña"""
+        try:
+            result = AuthService.request_password_reset(email, db)
+            return ForgotPasswordResponse(
+                message=result["message"],
+                detail=result["detail"]
+            )
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            logger.exception("Error inesperado en request_password_reset")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error interno al solicitar recuperación de contraseña"
+            )
+    
+    @staticmethod
+    def reset_password_with_code(email: str, code: str, new_password: str, db: Session) -> ResetPasswordResponse:
+        """Resetea la contraseña usando un código de recuperación"""
+        try:
+            result = AuthService.reset_password_with_code(email, code, new_password, db)
+            return ResetPasswordResponse(
+                message=result["message"],
+                detail=result["detail"]
+            )
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            logger.exception("Error inesperado en reset_password_with_code")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error interno al cambiar contraseña"
             )

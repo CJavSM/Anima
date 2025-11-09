@@ -13,18 +13,35 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validación básica
+    if (!email.trim()) {
+      setError('Por favor ingresa tu email');
+      return;
+    }
+    
     setLoading(true);
     setError('');
+    console.log('🔄 Enviando solicitud de recuperación para:', email);
 
-    const result = await authService.requestPasswordReset(email);
-
-    if (result.success) {
-      setSuccess(true);
-    } else {
-      setError(result.error);
+    try {
+      const result = await authService.requestPasswordReset(email.trim());
+      
+      console.log('📧 Resultado de recuperación:', result);
+      
+      if (result.success) {
+        setSuccess(true);
+        console.log('✅ Código enviado exitosamente');
+      } else {
+        setError(result.error || 'Error desconocido al enviar código');
+        console.error('❌ Error en resultado:', result.error);
+      }
+    } catch (err) {
+      console.error('❌ Error capturado en catch:', err);
+      setError(err.message || 'Error inesperado. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (success) {
@@ -64,16 +81,63 @@ const ForgotPassword = () => {
 
               <div className="alert alert-success">
                 <span className="alert-icon">✅</span>
-                <span>Te hemos enviado un código de recuperación a {email}</span>
+                <span>Te hemos enviado un código de recuperación a <strong>{email}</strong></span>
+              </div>
+
+              <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                <p style={{ marginBottom: '1rem', color: 'var(--gray-600)' }}>
+                  El código es válido por <strong>30 minutos</strong>
+                </p>
+                
+                <div style={{ 
+                  background: 'var(--gray-50)', 
+                  padding: '1rem', 
+                  borderRadius: '0.75rem',
+                  border: '1px solid var(--gray-200)',
+                  marginBottom: '1.5rem'
+                }}>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--gray-600)', marginBottom: '0.5rem' }}>
+                    💡 <strong>¿No encuentras el email?</strong>
+                  </p>
+                  <ul style={{ 
+                    textAlign: 'left', 
+                    fontSize: '0.875rem', 
+                    color: 'var(--gray-600)',
+                    paddingLeft: '1rem',
+                    margin: 0
+                  }}>
+                    <li>Revisa tu carpeta de spam o correo no deseado</li>
+                    <li>Verifica que el email esté escrito correctamente</li>
+                    <li>Espera unos minutos, a veces demora en llegar</li>
+                  </ul>
+                </div>
               </div>
 
               <div className="auth-footer">
                 <p>
                   <Link to="/reset-password" className="auth-link">
-                    ¿Ya tienes el código? Ingresa aquí
+                    ¿Ya tienes el código? Cambiar contraseña
                   </Link>
                 </p>
-                <p>
+                <p style={{ marginTop: '0.75rem' }}>
+                  <button 
+                    onClick={() => {
+                      setSuccess(false);
+                      setEmail('');
+                      setError('');
+                    }}
+                    className="auth-link"
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Enviar a otro email
+                  </button>
+                </p>
+                <p style={{ marginTop: '0.75rem' }}>
                   <Link to="/login" className="auth-link">
                     Volver al login
                   </Link>
@@ -145,12 +209,13 @@ const ForgotPassword = () => {
                   placeholder="Ingresa tu email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !email.trim()}
                 className="btn-submit btn-primary"
               >
                 <span className="btn-content">

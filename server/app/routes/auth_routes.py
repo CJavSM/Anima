@@ -5,7 +5,10 @@ from app.config.database import get_db
 from app.controllers.auth_controller import AuthController
 from app.services.spotify_auth_service import spotify_auth_service
 import secrets
-from app.schemas.auth_schemas import UserRegister, UserLogin, TokenResponse, UserResponse, MessageResponse
+from app.schemas.auth_schemas import (
+    UserRegister, UserLogin, TokenResponse, UserResponse, MessageResponse,
+    UpdateUserRequest, ForgotPasswordRequest, ResetPasswordRequest
+)
 from app.schemas.auth_schemas import UpdateUserRequest
 from app.middlewares.auth_middleware import get_current_active_user
 from app.models.user import User
@@ -303,3 +306,57 @@ def spotify_disconnect(
     (no se puede desvincular si es el único método de autenticación).
     """
     return AuthController.disconnect_spotify(current_user, db)
+
+# ============================================
+# ENDPOINTS PARA RECUPERACIÓN DE CONTRASEÑA
+# ============================================
+
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_200_OK,
+    summary="Solicitar código de recuperación",
+    description="Envía un código de 6 dígitos al email del usuario para recuperar su contraseña"
+)
+def forgot_password(
+    request: ForgotPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Solicita recuperación de contraseña enviando código por email.
+    
+    - **email**: Email de la cuenta a recuperar
+    
+    El sistema enviará un código de 6 dígitos válido por 30 minutos.
+    """
+    return AuthController.request_password_reset(request.email, db)
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_200_OK,
+    summary="Cambiar contraseña con código",
+    description="Cambia la contraseña usando el código de recuperación recibido por email"
+)
+def reset_password(
+    request: ResetPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Cambia la contraseña usando el código de recuperación.
+    
+    - **email**: Email de la cuenta
+    - **code**: Código de 6 dígitos recibido por email
+    - **new_password**: Nueva contraseña (debe cumplir requisitos de seguridad)
+    
+    Requisitos de la nueva contraseña:
+    - Mínimo 8 caracteres
+    - Al menos una letra minúscula
+    - Al menos una letra mayúscula
+    - Al menos un número
+    - Al menos un carácter especial
+    """
+    return AuthController.reset_password_with_code(
+        request.email, 
+        request.code, 
+        request.new_password, 
+        db
+    )

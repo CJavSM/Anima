@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth_routes, emotion_routes, music_routes, history_routes, contact_routes, spotify_routes
+from app.routes import auth_routes, contact_routes
 import os
 from dotenv import load_dotenv
 from app.config.database import Base, engine
 import logging
+
+# Importar modelos para que SQLAlchemy los registre
+from app.models.user import User
+from app.models.password_reset_code import PasswordResetCode
 
 load_dotenv()
 
@@ -60,11 +64,7 @@ logger.info(f"✅ CORS configurado con {len(origins)} orígenes permitidos")
 
 # Incluir rutas
 app.include_router(auth_routes.router)
-app.include_router(emotion_routes.router)
-app.include_router(music_routes.router)
-app.include_router(history_routes.router)
-app.include_router(contact_routes.router) 
-app.include_router(spotify_routes.router)
+app.include_router(contact_routes.router)
 
 # Ruta raíz
 @app.get("/")
@@ -97,9 +97,10 @@ def on_startup():
         except Exception:
             logger.info("📊 DB URL: <no disponible>")
 
-        # Probar conexión simple
+        # Probar conexión simple y aplicar migraciones básicas
         with engine.connect() as conn:
             conn.exec_driver_sql("SELECT 1")
+            
             # Aplicar migraciones ligeras: agregar columnas de Spotify si no existen
             try:
                 conn.exec_driver_sql("""
@@ -115,38 +116,28 @@ def on_startup():
                 """)
             except Exception:
                 # Algunos drivers/PG versions no permiten múltiples ADD COLUMN en una sola sentencia
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_id VARCHAR(255) UNIQUE;")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_email VARCHAR(255);")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_display_name VARCHAR(255);")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_access_token TEXT;")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_refresh_token TEXT;")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_token_expires_at TIMESTAMP WITH TIME ZONE;")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_connected BOOLEAN DEFAULT FALSE;")
-                except Exception:
-                    pass
-                try:
-                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_connected_at TIMESTAMP WITH TIME ZONE;")
-                except Exception:
-                    pass
+                migrations = [
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_id VARCHAR(255) UNIQUE;",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_email VARCHAR(255);",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_display_name VARCHAR(255);",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_access_token TEXT;",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_refresh_token TEXT;",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_token_expires_at TIMESTAMP WITH TIME ZONE;",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_connected BOOLEAN DEFAULT FALSE;",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS spotify_connected_at TIMESTAMP WITH TIME ZONE;"
+                ]
+                
+                for migration in migrations:
+                    try:
+                        conn.exec_driver_sql(migration)
+                    except Exception as e:
+                        logger.warning(f"Migration warning: {migration} - {e}")
+            
+            # Crear índices si no existen
+            try:
+                conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS idx_users_spotify_id ON users(spotify_id);")
+            except Exception as e:
+                logger.warning(f"Index creation warning: {e}")
         
         logger.info("📊 Para verificar la conexión a la base de datos, visita /health/db")
 
