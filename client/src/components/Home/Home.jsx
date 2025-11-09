@@ -19,6 +19,7 @@ const Home = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState(null);
   const [showMusicModal, setShowMusicModal] = useState(false);
+  const [pendingRecommendations, setPendingRecommendations] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -178,6 +179,25 @@ const Home = () => {
   const handleCloseMusicModal = () => {
     setShowMusicModal(false);
   };
+
+  // Restaurar análisis pendiente si existe (por ejemplo tras completar o cancelar OAuth)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('pending_analysis');
+      if (raw) {
+        const pending = JSON.parse(raw);
+        if (pending && pending.result) {
+          setResult(pending.result || null);
+          setAnalysisId(pending.analysisId || null);
+          setPendingRecommendations(pending.recommendations || null);
+          setShowMusicModal(true);
+          // Note: do not remove pending_analysis here; it will be cleared when the user saves
+        }
+      }
+    } catch (e) {
+      console.warn('No se pudo restaurar pending_analysis:', e);
+    }
+  }, []);
 
   return (
     <div className="home">
@@ -410,7 +430,8 @@ const Home = () => {
         <MusicRecommendations
           emotion={result.emotion}
           emotionColor={result.color}
-          analysisId={analysisId}
+            analysisId={analysisId}
+            initialRecommendations={pendingRecommendations}
           onClose={handleCloseMusicModal}
         />
       )}

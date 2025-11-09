@@ -195,14 +195,22 @@ class SpotifyUserService:
 
             if hasattr(e, 'response') and e.response is not None:
                 try:
-                    error_data = e.response.json()
-                    error_detail = error_data.get("error", {}).get("message", error_detail)
+                    # Intentar extraer mensaje detallado desde la respuesta de Spotify
+                    error_text = e.response.text
+                    error_status = getattr(e.response, 'status_code', None)
+                    try:
+                        error_data = e.response.json()
+                        # Spotify error puede venir en { error: { message: '...', status: ... } }
+                        error_detail = error_data.get("error", {}).get("message", error_data.get("error_description", error_text))
+                    except Exception:
+                        error_detail = error_text
+                    logger.error(f"🔎 Spotify API responded with status={error_status} body={error_text}")
                 except:
                     pass
-
+            # Incluir el detalle recibido para facilitar debugging en frontend/backend logs
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=error_detail
+                detail=f"{error_detail}"
             )
 
     def add_tracks_to_playlist(
@@ -308,9 +316,18 @@ class SpotifyUserService:
 
         except requests.exceptions.RequestException as e:
             logger.error(f"❌ Error obteniendo playlists: {e}")
+            # Si Spotify devolvió un body con detalle, incluirlo
+            detail_msg = "Error al obtener tus playlists de Spotify"
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    detail_msg = e.response.json().get('error', {}).get('message', e.response.text)
+                except Exception:
+                    detail_msg = getattr(e.response, 'text', detail_msg)
+                logger.error(f"🔎 Spotify API responded: {getattr(e.response, 'status_code', '')} {getattr(e.response, 'text', '')}")
+
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Error al obtener tus playlists de Spotify"
+                detail=detail_msg
             )
 
     def check_playlist_ownership(self, user: User, playlist_id: str, db: Session) -> bool:

@@ -29,11 +29,12 @@ api.interceptors.request.use(
     // indicar explícitamente que no deben incluir el token.
     const token = localStorage.getItem('token');
     const skipAuthFlag = config && config.skipAuth === true;
-    // Tratar endpoints de /auth/spotify como endpoints públicos por defecto
+    // Tratar endpoints de login/registro como endpoints públicos por defecto.
+    // No marcar genéricamente `/auth/spotify` como público: habrá casos donde
+    // necesitamos adjuntar el token para acciones de vinculación.
     const isAuthEndpoint = (config.url && (
       config.url.includes('/auth/login') ||
-      config.url.includes('/auth/register') ||
-      config.url.includes('/auth/spotify')
+      config.url.includes('/auth/register')
     )) || skipAuthFlag;
 
     if (token && !isAuthEndpoint) {

@@ -7,7 +7,7 @@ import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
 import './MusicRecommendations.css';
 
-const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) => {
+const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose, initialRecommendations = null }) => {
   const { user } = useAuth();
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,14 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
   const [saveToSpotify, setSaveToSpotify] = useState(false);
 
   useEffect(() => {
-    loadRecommendations();
+    // Si el padre pasó recomendaciones iniciales (por ejemplo para restaurar
+    // un análisis pendiente tras OAuth), usarlas en lugar de recargar.
+    if (initialRecommendations) {
+      setRecommendations(initialRecommendations);
+      setLoading(false);
+    } else {
+      loadRecommendations();
+    }
 
     // Cleanup: cancelar petición y detener audio al desmontar
     return () => {
@@ -179,6 +186,10 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
       }
 
       setTimeout(() => {
+        // Si guardó exitosamente, limpiar cualquier análisis/pendiente previo
+        try { localStorage.removeItem('pending_playlist_save'); } catch (e) {}
+        try { localStorage.removeItem('pending_analysis'); } catch (e) {}
+
         setShowSaveDialog(false);
         setSaveSuccess(false);
         setPlaylistName('');
@@ -235,19 +246,27 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             {!user && (
               <button
-                className="btn btn-secondary"
-                onClick={async () => {
-                  try {
-                    const url = await authService.getSpotifyAuthUrl();
-                    window.location.href = url;
-                  } catch (e) {
-                    console.error('Error iniciando OAuth Spotify', e);
-                    alert('No se pudo iniciar autenticación con Spotify');
-                  }
-                }}
-              >
-                Iniciar sesión con Spotify
-              </button>
+                  className="btn btn-secondary"
+                  onClick={async () => {
+                    try {
+                      // Guardar el análisis actual para restaurarlo después del flujo OAuth
+                      try {
+                        const pending = { result: { emotion, emotionColor }, analysisId, recommendations };
+                        localStorage.setItem('pending_analysis', JSON.stringify(pending));
+                      } catch (e) {
+                        console.warn('No se pudo guardar pending_analysis:', e);
+                      }
+
+                      const url = await authService.getSpotifyAuthUrl();
+                      window.location.href = url;
+                    } catch (e) {
+                      console.error('Error iniciando OAuth Spotify', e);
+                      alert('No se pudo iniciar autenticación con Spotify');
+                    }
+                  }}
+                >
+                  Iniciar sesión con Spotify
+                </button>
             )}
 
             {user && !user.spotify_connected && (
@@ -255,6 +274,14 @@ const MusicRecommendations = ({ emotion, emotionColor, analysisId, onClose }) =>
                 className="btn btn-secondary"
                 onClick={async () => {
                   try {
+                    // Guardar el análisis actual para restaurarlo después del flujo de linking
+                    try {
+                      const pending = { result: { emotion, emotionColor }, analysisId, recommendations };
+                      localStorage.setItem('pending_analysis', JSON.stringify(pending));
+                    } catch (e) {
+                      console.warn('No se pudo guardar pending_analysis:', e);
+                    }
+
                     const url = await authService.getSpotifyLinkUrl();
                     window.location.href = url;
                   } catch (e) {

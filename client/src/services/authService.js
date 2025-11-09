@@ -166,8 +166,9 @@ const getSpotifyAuthUrl = async () => {
 
 const getSpotifyLinkUrl = async () => {
   try {
-    // Vincular también debe obtener la URL pública del servidor sin token
-    const { data } = await api.get('/api/auth/spotify/link', { skipAuth: true });
+    // Este endpoint requiere usuario autenticado (vincular a cuenta existente).
+    // No pasar skipAuth para que el interceptor adjunte el token si existe.
+    const { data } = await api.get('/api/auth/spotify/link');
     if (data.error) throw new Error(data.error);
     return data.authorization_url;
   } catch (error) {

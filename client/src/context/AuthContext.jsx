@@ -34,6 +34,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const data = await authService.me();
+      setUser(data);
+      return { success: true, user: data };
+    } catch (error) {
+      console.error('❌ [AuthContext] Error refreshing user:', error);
+      setUser(null);
+      return { success: false, error };
+    }
+  };
+
   // Permitir que componentes hijos reemplacen el usuario del contexto
   // (útil para flows OAuth donde el token se establece fuera del login normal)
   const setUserFromCallback = (userObj) => {
@@ -66,6 +78,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     setUser: setUserFromCallback,
+    refreshUser,
     isAuthenticated: !!user,
     loading
   };
