@@ -34,6 +34,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Permitir que componentes hijos reemplacen el usuario del contexto
+  // (útil para flows OAuth donde el token se establece fuera del login normal)
+  const setUserFromCallback = (userObj) => {
+    setUser(userObj);
+    try {
+      if (userObj) localStorage.setItem('user', JSON.stringify(userObj));
+      else localStorage.removeItem('user');
+    } catch (e) {
+      console.error('❌ [AuthContext] Error guardando user en localStorage', e);
+    }
+  };
+
   const register = async (userData) => {
     try {
       const data = await authService.register(userData);
@@ -53,6 +65,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    setUser: setUserFromCallback,
     isAuthenticated: !!user,
     loading
   };

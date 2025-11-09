@@ -40,12 +40,16 @@ const Login = () => {
 
   const [spotifyLoading, setSpotifyLoading] = useState(false);
 
-  const handleSpotify = async () => {
+  const handleSpotify = async (e) => {
+    // prevenir comportamiento por defecto por si el click proviene de un submit
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    console.log('🔔 [Login] handleSpotify invoked, spotifyLoading=', spotifyLoading);
     if (spotifyLoading) return;
     setSpotifyLoading(true);
     try {
       const url = await authService.getSpotifyAuthUrl();
       if (!url) throw new Error('No se obtuvo la URL de Spotify');
+      console.log('🔗 [Login] Spotify auth URL:', url);
       // usar assign/replace es equivalente; assign mantiene historial
       window.location.assign(url);
     } catch (e) {
@@ -166,7 +170,7 @@ const Login = () => {
               <button
                 type="button"
                 className="btn-submit btn-secondary"
-                onClick={handleSpotify}
+                onClick={(e) => { e.preventDefault(); handleSpotify(e); }}
                 disabled={spotifyLoading}
               >
                 <span className="btn-content">

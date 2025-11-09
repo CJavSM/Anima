@@ -154,7 +154,9 @@ const logout = () => {
  */
 const getSpotifyAuthUrl = async () => {
   try {
-    const { data } = await api.get('/api/auth/spotify/login');
+    // skipAuth: true evita que el interceptor adjunte Authorization
+    // (el endpoint de Spotify no requiere token y debe ser público)
+    const { data } = await api.get('/api/auth/spotify/login', { skipAuth: true });
     return data.authorization_url;
   } catch (error) {
     console.error('❌ [AuthService] Error obteniendo URL de Spotify:', error);
@@ -164,7 +166,8 @@ const getSpotifyAuthUrl = async () => {
 
 const getSpotifyLinkUrl = async () => {
   try {
-    const { data } = await api.get('/api/auth/spotify/link');
+    // Vincular también debe obtener la URL pública del servidor sin token
+    const { data } = await api.get('/api/auth/spotify/link', { skipAuth: true });
     if (data.error) throw new Error(data.error);
     return data.authorization_url;
   } catch (error) {

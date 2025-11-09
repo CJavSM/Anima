@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setUser } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -40,6 +42,13 @@ const AuthCallback = () => {
           localStorage.setItem('token', token);
           try {
             const user = await authService.me();
+            // Actualizar el contexto de autenticación para que ProtectedRoute
+            // reconozca al usuario sin necesidad de recargar la app.
+            try {
+              if (typeof setUser === 'function') setUser(user);
+            } catch (e) {
+              console.warn('No se pudo actualizar AuthContext.setUser:', e);
+            }
             localStorage.setItem('user', JSON.stringify(user));
           } catch (e) {
             console.error('Error al obtener usuario después de OAuth', e);
@@ -85,7 +94,7 @@ const AuthCallback = () => {
         navigate('/login');
       }
     })();
-  }, [location.search, navigate]);
+  }, [location.search, navigate, setUser]);
 
   return (
     <div style={{ padding: 24 }}>

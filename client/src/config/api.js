@@ -24,10 +24,18 @@ api.interceptors.request.use(
       fullURL: `${config.baseURL}${config.url}`,
     });
 
-    // Solo agregar token si existe y NO es una petición de auth
+    // Solo agregar token si existe y NO es una petición de auth.
+    // Permitir que llamadas individuales pasen { skipAuth: true } para
+    // indicar explícitamente que no deben incluir el token.
     const token = localStorage.getItem('token');
-    const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
-    
+    const skipAuthFlag = config && config.skipAuth === true;
+    // Tratar endpoints de /auth/spotify como endpoints públicos por defecto
+    const isAuthEndpoint = (config.url && (
+      config.url.includes('/auth/login') ||
+      config.url.includes('/auth/register') ||
+      config.url.includes('/auth/spotify')
+    )) || skipAuthFlag;
+
     if (token && !isAuthEndpoint) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log('🔐 [API Request] Token agregado');
