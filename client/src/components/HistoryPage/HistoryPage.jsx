@@ -77,18 +77,28 @@ const HistoryPage = () => {
 
   return (
     <div className="history-page">
+      {/* Fondo animado estilo Landing */}
+      <div className="page-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
       <SharedNavbar />
 
       {/* Contenido Principal */}
       <div className="page-container">
         {/* Header */}
         <div className="page-header">
-          <div>
-            <h1 className="page-title">📊 Mi Historial de Emociones</h1>
-            <p className="page-subtitle">
-              Revisa todos los análisis que has realizado
-            </p>
+          <div className="badge-modern floating">
+            <span className="badge-icon">📚</span>
+            <span>Historial Completo</span>
           </div>
+          <h1 className="page-title-hero">
+            Mi Historial de <span className="gradient-text">Emociones</span>
+          </h1>
+          <p className="page-subtitle-hero">
+            Revisa todos los análisis que has realizado
+          </p>
         </div>
 
         {/* Estadísticas */}

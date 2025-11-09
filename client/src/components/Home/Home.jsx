@@ -336,41 +336,57 @@ const Home = () => {
 
                       <div className="confidence-bar">
                         <div className="confidence-label">
-                          <span>Confianza</span>
+                          <span>Confianza del Análisis</span>
                           <span className="confidence-value">{result.confidence}%</span>
                         </div>
                         <div className="progress-bar">
                           <div 
                             className="progress-fill"
                             style={{ 
-                              width: `${result.confidence}%`,
-                              backgroundColor: result.color
+                              width: `${result.confidence}%`
                             }}
                           ></div>
                         </div>
                       </div>
 
                       <div className="emotions-breakdown">
-                        <h4 className="breakdown-title">Emociones Detectadas</h4>
-                        {Object.entries(result.emotions)
-                          .sort((a, b) => b[1] - a[1])
-                          .map(([emotion, value]) => (
-                            <div key={emotion} className="emotion-item">
-                              <span className="emotion-name">
-                                {emotionService.getEmotionEmoji(emotion)} {emotionService.translateEmotion(emotion)}
-                              </span>
-                              <div className="emotion-bar">
-                                <div 
-                                  className="emotion-fill"
-                                  style={{ 
-                                    width: `${value}%`,
-                                    backgroundColor: emotionService.getEmotionColor(emotion)
-                                  }}
-                                ></div>
-                              </div>
-                              <span className="emotion-value">{value.toFixed(1)}%</span>
-                            </div>
-                          ))}
+                        <h4 className="breakdown-title">Top 5 Emociones Detectadas</h4>
+                        <div className="emotions-gauge-container">
+                          {Object.entries(result.emotions)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 5)
+                            .map(([emotion, value]) => {
+                              const color = emotionService.getEmotionColor(emotion);
+                              const percentage = value;
+                              return (
+                                <div key={emotion} className="emotion-gauge">
+                                  <div className="gauge-circle">
+                                    <div className="gauge-background">
+                                      <div 
+                                        className="gauge-fill"
+                                        style={{
+                                          background: `conic-gradient(from -90deg, ${color} ${percentage * 3.6}deg, var(--gray-200) ${percentage * 3.6}deg)`,
+                                          '--gauge-color': color,
+                                          '--percentage': `${percentage * 3.6}deg`
+                                        }}
+                                      ></div>
+                                    </div>
+                                    <div className="gauge-center">
+                                      <span className="gauge-emoji">
+                                        {emotionService.getEmotionEmoji(emotion)}
+                                      </span>
+                                      <span className="gauge-percentage">
+                                        {value.toFixed(1)}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <span className="emotion-label">
+                                    {emotionService.translateEmotion(emotion)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
 
                       <div className="result-actions">

@@ -150,13 +150,27 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      {/* Fondo animado estilo Landing */}
+      <div className="page-background">
+        <div className="gradient-orb orb-1"></div>
+        <div className="gradient-orb orb-2"></div>
+        <div className="gradient-orb orb-3"></div>
+      </div>
       <SharedNavbar />
 
       <div className="dashboard-content">
         <div className="dashboard-card">
           <div className="dashboard-header">
-            <h2 className="dashboard-title">📊 Panel de Control</h2>
-            <p className="dashboard-subtitle">Análisis completo de tu actividad emocional</p>
+            <div className="badge-modern floating">
+              <span className="badge-icon">📊</span>
+              <span>Dashboard Inteligente</span>
+            </div>
+            <h1 className="page-title-hero">
+              Panel de <span className="gradient-text">Control</span>
+            </h1>
+            <p className="page-subtitle-hero">
+              Análisis completo de tu actividad emocional
+            </p>
           </div>
 
           {loading ? (
