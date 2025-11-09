@@ -7,6 +7,7 @@ import Register from './components/Auth/Register';
 import AuthCallback from './components/Auth/AuthCallback';
 import Home from './components/Home/Home';
 import Dashboard from './components/Dashboard/Dashboard';
+import Profile from './components/Profile/Profile';
 import HistoryPage from './components/HistoryPage/HistoryPage';
 import PlaylistsPage from './components/PlaylistsPage/PlaylistsPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

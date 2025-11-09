@@ -70,9 +70,10 @@
 }
 
 .nav-link.active {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
+  box-shadow: 0 6px 18px rgba(58, 29, 225, 0.18);
+  transform: translateY(-2px);
 }
 
 /* Small utility so nav buttons match Landing/Contact button style */

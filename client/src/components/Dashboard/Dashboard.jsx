@@ -2,6 +2,9 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import { authService } from '../../services/authService';
+import SharedNavbar from '../Shared/SharedNavbar';
+import historyService from '../../services/historyService';
+import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -33,113 +36,116 @@ const Dashboard = () => {
       alert('No se pudo desvincular Spotify');
     }
   };
+  const [stats, setStats] = useState(null);
+  const [recent, setRecent] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadStats = async () => {
+      setLoading(true);
+      try {
+        const res = await historyService.getStats();
+        if (res.success && mounted) {
+          setStats(res.data);
+          setRecent(res.data.recent_activity || []);
+        }
+      } catch (e) {
+        console.error('Error cargando estadísticas:', e);
+        if (mounted) setError('No se pudieron cargar las estadísticas');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadStats();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className="dashboard">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="navbar-content">
-            <h1 className="navbar-brand">Ánima</h1>
-            <div className="navbar-user">
-              <span className="navbar-username">
-                Hola, <span>{user?.username || user?.first_name}</span>
-              </span>
-              <button onClick={handleLogout} className="btn-logout">
-                Cerrar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <SharedNavbar />
 
-      {/* Content */}
       <div className="dashboard-content">
         <div className="dashboard-card">
           <div className="dashboard-header">
-            <h2 className="dashboard-title">¡Bienvenido a Ánima! 🎵</h2>
-            <p className="dashboard-subtitle">
-              Música que refleja cómo te sentís
-            </p>
+            <h2 className="dashboard-title">Panel de Control</h2>
+            <p className="dashboard-subtitle">Resumen rápido de tu actividad</p>
           </div>
 
-          {/* User Info Card */}
-          <div className="profile-card">
-            <h3 className="profile-title">Tu Perfil</h3>
-            <div className="profile-grid">
-              <div className="profile-field">
-                <span className="profile-label">Username</span>
-                <p className="profile-value">{user?.username}</p>
-              </div>
-              <div className="profile-field">
-                <span className="profile-label">Email</span>
-                <p className="profile-value">{user?.email}</p>
-              </div>
-              {user?.first_name && (
-                <div className="profile-field">
-                  <span className="profile-label">Nombre</span>
-                  <p className="profile-value">
-                    {user.first_name} {user.last_name}
-                  </p>
+          {loading ? (
+            <p>Cargando estadísticas…</p>
+          ) : error ? (
+            <p className="alert alert-error">{error}</p>
+          ) : (
+            <>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon">📸</div>
+                  <div className="stat-content">
+                    <div className="stat-label">Análisis realizados</div>
+                    <div className="stat-value">{stats?.total_analyses ?? '—'}</div>
+                  </div>
                 </div>
-              )}
-              <div className="profile-field">
-                <span className="profile-label">Estado</span>
-                <p className="profile-value">
-                  <span className={`badge ${user?.is_verified ? 'badge-success' : 'badge-warning'}`}>
-                    {user?.is_verified ? '✓ Verificado' : '⏳ Pendiente de verificación'}
-                  </span>
-                </p>
+
+                <div className="stat-card">
+                  <div className="stat-icon">🎵</div>
+                  <div className="stat-content">
+                    <div className="stat-label">Playlists guardadas</div>
+                    <div className="stat-value">{stats?.total_saved_playlists ?? '—'}</div>
+                  </div>
+                </div>
+
+                <div className="stat-card">
+                  <div className="stat-icon">📊</div>
+                  <div className="stat-content">
+                    <div className="stat-label">Emoción más común</div>
+                    <div className="stat-value">{stats?.most_common_emotion ?? '—'}</div>
+                  </div>
+                </div>
               </div>
-              <div className="profile-field">
-                <span className="profile-label">Spotify</span>
-                <p className="profile-value">
-                  {user?.spotify_connected ? (
-                    <>
-                      <span className="badge badge-success">Conectado</span>
-                      <button onClick={handleDisconnectSpotify} className="btn btn-link" style={{ marginLeft: 8 }}>
-                        Desvincular
-                      </button>
-                    </>
-                  ) : (
-                    <button onClick={handleConnectSpotify} className="btn btn-secondary">
-                      Conectar con Spotify
-                    </button>
-                  )}
-                </p>
+
+              <div style={{ marginTop: 20 }} className="features-grid">
+                <div className="feature-card feature-card-purple">
+                  <div className="feature-icon">📈</div>
+                  <h4 className="feature-title">Desglose de emociones</h4>
+                  <p className="feature-description">{stats?.emotions_breakdown ? 'Disponible' : 'Sin datos'}</p>
+                </div>
+
+                <div className="feature-card feature-card-blue">
+                  <div className="feature-icon">�</div>
+                  <h4 className="feature-title">Actividad reciente</h4>
+                  <p className="feature-description">Últimos análisis realizados</p>
+                </div>
+
+                <div className="feature-card feature-card-green">
+                  <div className="feature-icon">⚙️</div>
+                  <h4 className="feature-title">Integraciones</h4>
+                  <p className="feature-description">Conexión con Spotify: {user?.spotify_connected ? '✅' : '—'}</p>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Coming Soon Features */}
-          <div className="features-grid">
-            <div className="feature-card feature-card-purple">
-              <div className="feature-icon">📸</div>
-              <h4 className="feature-title">Análisis de Emoción</h4>
-              <p className="feature-description">
-                Captura tu emoción y recibe música personalizada
-              </p>
-              <span className="badge badge-warning">Próximamente</span>
-            </div>
-
-            <div className="feature-card feature-card-blue">
-              <div className="feature-icon">🎵</div>
-              <h4 className="feature-title">Recomendaciones</h4>
-              <p className="feature-description">
-                Playlists de Spotify basadas en tu estado de ánimo
-              </p>
-              <span className="badge badge-warning">Próximamente</span>
-            </div>
-
-            <div className="feature-card feature-card-green">
-              <div className="feature-icon">📊</div>
-              <h4 className="feature-title">Historial</h4>
-              <p className="feature-description">
-                Revisa tus análisis y recomendaciones anteriores
-              </p>
-              <span className="badge badge-warning">Próximamente</span>
-            </div>
-          </div>
+              <div style={{ marginTop: 18 }}>
+                <h3 style={{ marginBottom: 8 }}>Actividad reciente</h3>
+                {recent && recent.length > 0 ? (
+                  <ul>
+                    {recent.map((r) => (
+                      <li key={r.analysis_id}>
+                        {new Date(r.analyzed_at).toLocaleString()} — {r.dominant_emotion} ({Math.round((r.confidence ?? 0) * 100)}%)
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No hay actividad reciente.</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

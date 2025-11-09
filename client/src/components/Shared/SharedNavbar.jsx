@@ -57,10 +57,21 @@ const SharedNavbar = () => {
             >
               🏠 Dashboard
             </button>
+            <button
+              onClick={() => navigate('/profile')}
+              className={`nav-link ${isActive('/profile')}`}
+            >
+              👤 Perfil
+            </button>
           </div>
           
           <div className="navbar-user">
-            <span className="navbar-username">
+            <span
+              className="navbar-username"
+              onClick={() => navigate('/profile')}
+              style={{ cursor: 'pointer' }}
+              title="Ver perfil"
+            >
               <span>{user?.username || user?.first_name}</span>
             </span>
             <button onClick={handleLogout} className="btn-logout">

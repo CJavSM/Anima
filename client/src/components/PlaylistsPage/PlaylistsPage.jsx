@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import SharedNavbar from '../Shared/SharedNavbar';
 import historyService from '../../services/historyService';
 import spotifyService from '../../services/spotifyService';
 import { authService } from '../../services/authService';
@@ -9,7 +10,7 @@ import musicService from '../../services/musicService';
 import './PlaylistsPage.css';
 
 const PlaylistsPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const [playlists, setPlaylists] = useState([]);
@@ -69,10 +70,7 @@ const PlaylistsPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  
 
   const toggleFavorite = async (playlistId, currentStatus) => {
     try {
@@ -149,36 +147,7 @@ const PlaylistsPage = () => {
 
   return (
     <div className="playlists-page">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="navbar-content">
-            <h1 className="navbar-brand" onClick={() => navigate('/home')}>Ánima</h1>
-            <div className="navbar-menu">
-              <button onClick={() => navigate('/home')} className="nav-link">
-                Analizar
-              </button>
-              <button onClick={() => navigate('/history')} className="nav-link">
-                Historial
-              </button>
-              <button onClick={() => navigate('/playlists')} className="nav-link active">
-                Playlists
-              </button>
-              <button onClick={() => navigate('/dashboard')} className="nav-link">
-                Dashboard
-              </button>
-            </div>
-            <div className="navbar-user">
-              <span className="navbar-username">
-                <span>{user?.username || user?.first_name}</span>
-              </span>
-              <button onClick={handleLogout} className="btn-logout">
-                Cerrar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <SharedNavbar />
 
       {/* Contenido Principal */}
       <div className="page-container">

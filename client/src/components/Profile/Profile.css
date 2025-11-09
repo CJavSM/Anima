@@ -1,0 +1,29 @@
+.profile-page { min-height: 100vh; background: var(--gray-50); color: var(--gray-900); }
+
+.navbar { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top:0; z-index:100; }
+
+.navbar-container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+
+.navbar-content { display:flex; justify-content:space-between; align-items:center; height:4.5rem; }
+
+.navbar-brand { font-size:1.5rem; font-weight:700; background:var(--gradient-primary); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+.profile-content { max-width: 80rem; margin: 0 auto; padding: 3rem 1rem; }
+
+.profile-card { background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 16px 48px rgba(0,0,0,0.06); }
+
+.profile-title { font-size: 1.5rem; font-weight:700; margin-bottom: 1rem; color: var(--gray-900); }
+
+.profile-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+
+.profile-field { display:flex; flex-direction:column; }
+
+.profile-label { font-size:0.875rem; color:var(--gray-600); margin-bottom:0.25rem; font-weight:600; }
+
+.profile-value { font-size:1.0625rem; color:var(--gray-900); font-weight:500; }
+
+.badge { display:inline-flex; align-items:center; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:600; }
+
+.badge-success { background: var(--green-50); color: var(--green-800); }
+
+.badge-warning { background: var(--yellow-100); color: var(--yellow-800); }

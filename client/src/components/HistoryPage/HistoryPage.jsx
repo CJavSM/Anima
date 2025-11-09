@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import SharedNavbar from '../Shared/SharedNavbar';
 import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
 import './HistoryPage.css';
 
 const HistoryPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const [analyses, setAnalyses] = useState([]);
@@ -57,10 +58,7 @@ const HistoryPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -79,36 +77,7 @@ const HistoryPage = () => {
 
   return (
     <div className="history-page">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="navbar-content">
-            <h1 className="navbar-brand" onClick={() => navigate('/home')}>Ánima</h1>
-            <div className="navbar-menu">
-              <button onClick={() => navigate('/home')} className="nav-link">
-                Analizar
-              </button>
-              <button onClick={() => navigate('/history')} className="nav-link active">
-                Historial
-              </button>
-              <button onClick={() => navigate('/playlists')} className="nav-link">
-                Playlists
-              </button>
-              <button onClick={() => navigate('/dashboard')} className="nav-link">
-                Dashboard
-              </button>
-            </div>
-            <div className="navbar-user">
-              <span className="navbar-username">
-                <span>{user?.username || user?.first_name}</span>
-              </span>
-              <button onClick={handleLogout} className="btn-logout">
-                Cerrar Sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <SharedNavbar />
 
       {/* Contenido Principal */}
       <div className="page-container">

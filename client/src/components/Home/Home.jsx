@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import SharedNavbar from '../Shared/SharedNavbar';
 import emotionService from '../../services/emotionService';
 import MusicRecommendations from '../MusicRecommendations/MusicRecommendations';
 import './Home.css';
 
 const Home = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
@@ -31,10 +32,7 @@ const Home = () => {
     };
   }, [stream]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
@@ -181,37 +179,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <nav className="navbar">
-        <div className="navbar-container">
-            <div className="navbar-content">
-            <h1 className="navbar-brand" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }}>
-                Ánima
-            </h1>
-            <div className="navbar-menu">
-                <button onClick={() => navigate('/home')} className="nav-link active">
-                Analizar
-                </button>
-                <button onClick={() => navigate('/history')} className="nav-link">
-                Historial
-                </button>
-                <button onClick={() => navigate('/playlists')} className="nav-link">
-                Playlists
-                </button>
-                <button onClick={() => navigate('/dashboard')} className="nav-link">
-                Dashboard
-                </button>
-            </div>
-            <div className="navbar-user">
-                <span className="navbar-username">
-                <span>{user?.username || user?.first_name}</span>
-                </span>
-                <button onClick={handleLogout} className="btn-logout">
-                Cerrar Sesión
-                </button>
-            </div>
-            </div>
-        </div>
-        </nav>
+      <SharedNavbar />
 
       <div className="home-content">
         <div className="home-header">
