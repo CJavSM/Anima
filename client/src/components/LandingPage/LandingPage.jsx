@@ -199,7 +199,7 @@ const LandingPage = () => {
               ¿Qué hace a <span className="gradient-text">Ánima</span> especial?
             </h2>
             <p className="section-subtitle">
-              Combinamos tecnología de vanguardia con diseño intuitivo
+              Combinamos tecnología de vanguardia con diseño intuitivo para crear experiencias únicas
             </p>
           </div>
 
@@ -212,7 +212,7 @@ const LandingPage = () => {
                 onMouseLeave={() => setActiveFeature(null)}
                 style={{
                   '--feature-color': feature.color,
-                  animationDelay: `${index * 0.1}s`
+                  animationDelay: `${index * 0.15}s`
                 }}
               >
                 <div className="feature-icon-wrapper">
@@ -227,7 +227,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* How it works - Animado */}
       <section id="how-it-works" className="how-it-works-section">
         <div className="section-container">

@@ -1,19 +1,12 @@
-/* ============================================
-  NAVBAR MEJORADA
-  ============================================ */
-
-/* Uses centralized theme variables from styles/theme.css */
-/**
- * Archivo: client/src/components/Shared/SharedNavbar.css
- * Estilos compartidos del navbar
- */
-
 .navbar {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(58, 29, 225, 0.08);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(58, 29, 225, 0.1);
 }
 
 .navbar-container {
@@ -26,7 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 4.5rem;
+  height: 5rem;
 }
 
 .navbar-brand {
@@ -37,7 +30,9 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin: 0;
-  transition: transform 0.2s;
+  transition: all 0.3s;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
 }
 
 .navbar-brand:hover {
@@ -47,6 +42,7 @@
 .navbar-menu {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .nav-link {
@@ -55,38 +51,50 @@
   color: var(--gray-600);
   font-size: 1rem;
   font-weight: 500;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-link:hover {
-  background-color: var(--gray-100);
-  color: var(--gray-900);
+  background: rgba(58, 29, 225, 0.08);
+  color: var(--primary);
+  transform: translateY(-2px);
 }
 
 .nav-link.active {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 6px 18px rgba(58, 29, 225, 0.18);
+  box-shadow: 0 8px 24px rgba(58, 29, 225, 0.3);
   transform: translateY(-2px);
 }
 
-/* Small utility so nav buttons match Landing/Contact button style */
-.nav-link-button {
-  padding: 0.6rem 1rem;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: transform 0.18s, box-shadow 0.18s;
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 2s infinite;
 }
-.nav-link-button.primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(58, 29, 225, 0.24);
+
+@keyframes shimmer {
+  to { left: 100%; }
 }
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 .navbar-user {
   display: flex;
   align-items: center;
@@ -95,7 +103,16 @@
 
 .navbar-username {
   color: var(--gray-700);
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.navbar-username:hover {
+  background: rgba(58, 29, 225, 0.05);
+  color: var(--primary);
 }
 
 .navbar-username span {
@@ -104,26 +121,39 @@
 }
 
 .btn-logout {
-  background: linear-gradient(135deg, var(--red-500), var(--red-600));
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
   font-size: 0.9375rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-logout:hover {
-  background: linear-gradient(135deg, var(--red-600), var(--red-700));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
 }
 
-.btn-logout:active {
-  transform: translateY(0);
+.btn-logout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-logout:hover::before {
+  left: 100%;
 }
 
 /* Responsive */
@@ -148,14 +178,7 @@
   }
 
   .navbar-content {
-    justify-content: space-between;
-  }
-}
-
-/* Menú móvil mejorado */
-@media (max-width: 768px) {
-  .navbar-container {
-    padding: 0 1rem;
+    height: 4rem;
   }
 
   .navbar-brand {

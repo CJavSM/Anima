@@ -1,12 +1,83 @@
-/* 
-Archivo: client/src/components/HistoryPage/HistoryPage.css
-Estilos para la página de historial
-*/
-
 .history-page {
   min-height: 100vh;
   background: var(--gray-50);
   color: var(--gray-900);
+  position: relative;
+}
+
+.history-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 25% 75%, rgba(58, 29, 225, 0.06) 0%, transparent 50%),
+              radial-gradient(circle at 75% 25%, rgba(131, 86, 239, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Mejorar page header */
+.page-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.page-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 0.75rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+.page-subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-600);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Mejorar stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, white, rgba(255,255,255,0.8));
+  border-radius: 1.25rem;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 8px 32px rgba(58,29,225,0.08);
+  border: 1px solid rgba(58,29,225,0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(58,29,225,0.15);
+  border-color: rgba(58,29,225,0.2);
 }
 
 /* Page Container */
