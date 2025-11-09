@@ -48,7 +48,8 @@ jobs:
           AWS_REGION: us-east-1
           SECRET_KEY: test_secret_key_for_jwt
         run: |
-          pytest app/tests/unit -v --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
+          # run unit tests from the server working directory (tests live under server/tests)
+          pytest tests/unit -v --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -174,7 +175,8 @@ jobs:
           AWS_REGION: us-east-1
           ENVIRONMENT: test
         run: |
-          pytest app/tests/test_health.py -v --cov=app --cov-report=xml:coverage-integration.xml --cov-report=term-missing
+          # run integration health check from server working directory
+          pytest tests/test_health.py -v --cov=app --cov-report=xml:coverage-integration.xml --cov-report=term-missing
 
       - name: Upload integration coverage to Codecov
         uses: codecov/codecov-action@v4
