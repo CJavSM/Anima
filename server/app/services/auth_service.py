@@ -109,3 +109,33 @@ class AuthService:
                 detail="Usuario no encontrado"
             )
         return user
+
+    @staticmethod
+    def update_user(user: User, update_data: dict, db: Session) -> User:
+        """Actualiza campos permitidos del usuario, validando unicidad"""
+        # Validar cambios de email/username para unicidad
+        new_username = update_data.get('username')
+        new_email = update_data.get('email')
+
+        if new_username and new_username != user.username:
+            exists = db.query(User).filter(User.username == new_username).first()
+            if exists:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='El username ya está en uso')
+            user.username = new_username
+
+        if new_email and new_email != user.email:
+            exists = db.query(User).filter(User.email == new_email).first()
+            if exists:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='El email ya está registrado')
+            user.email = new_email
+
+        # Campos opcionales
+        if 'first_name' in update_data:
+            user.first_name = update_data.get('first_name')
+        if 'last_name' in update_data:
+            user.last_name = update_data.get('last_name')
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user

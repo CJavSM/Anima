@@ -213,6 +213,24 @@ const disconnectSpotify = async () => {
   }
 };
 
+const updateProfile = async (payload) => {
+  try {
+    const { data } = await api.patch('/api/auth/me', payload);
+    // Guardar usuario actualizado en localStorage si viene
+    try {
+      if (data) localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(data));
+    } catch (e) {
+      console.warn('[AuthService] No se pudo guardar user actualizado en localStorage', e);
+    }
+    return data;
+  } catch (error) {
+    console.error('❌ [AuthService] Error actualizando perfil:', error);
+    // Normalizar errores si vienen con detalle
+    if (error.response?.data?.detail) throw new Error(error.response.data.detail);
+    throw error;
+  }
+};
+
 export const authService = {
   login,
   register,
@@ -224,4 +242,5 @@ export const authService = {
   linkSpotify,
   exchangeSpotifyCode,
   disconnectSpotify,
+  updateProfile,
 };

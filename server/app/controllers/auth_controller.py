@@ -238,3 +238,31 @@ class AuthController:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al desvincular Spotify: {str(e)}"
             )
+
+    @staticmethod
+    def update_current_user(current_user: User, update_data: dict, db: Session) -> UserResponse:
+        """Actualiza el usuario autenticado con los campos permitidos"""
+        try:
+            updated = AuthService.update_user(current_user, update_data, db)
+            return UserResponse(
+                id=str(updated.id),
+                email=updated.email,
+                username=updated.username,
+                first_name=updated.first_name,
+                last_name=updated.last_name,
+                profile_picture=updated.profile_picture,
+                is_active=updated.is_active,
+                is_verified=updated.is_verified,
+                created_at=updated.created_at,
+                spotify_connected=updated.spotify_connected,
+                spotify_display_name=updated.spotify_display_name,
+                spotify_email=updated.spotify_email
+            )
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            logger.exception('Error actualizando usuario')
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Error al actualizar usuario: {str(e)}"
+            )

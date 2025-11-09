@@ -59,3 +59,18 @@ class TokenResponse(BaseModel):
 class MessageResponse(BaseModel):
     message: str
     detail: Optional[str] = None
+
+
+class UpdateUserRequest(BaseModel):
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
+    email: Optional[EmailStr] = None
+    first_name: Optional[str] = Field(None, max_length=100)
+    last_name: Optional[str] = Field(None, max_length=100)
+
+    @validator('username')
+    def username_alphanumeric_optional(cls, v):
+        if v is None:
+            return v
+        if not re.match("^[a-zA-Z0-9_-]+$", v):
+            raise ValueError('El username solo puede contener letras, números, guiones y guiones bajos')
+        return v

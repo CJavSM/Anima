@@ -6,6 +6,7 @@ from app.controllers.auth_controller import AuthController
 from app.services.spotify_auth_service import spotify_auth_service
 import secrets
 from app.schemas.auth_schemas import UserRegister, UserLogin, TokenResponse, UserResponse, MessageResponse
+from app.schemas.auth_schemas import UpdateUserRequest
 from app.middlewares.auth_middleware import get_current_active_user
 from app.models.user import User
 import os
@@ -112,6 +113,21 @@ def logout(
         message="Sesión cerrada exitosamente",
         detail="Token debe ser eliminado del cliente"
     )
+
+
+@router.patch(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Actualizar usuario actual",
+    description="Actualiza campos selectos del usuario autenticado"
+)
+def update_current_user(
+    update_data: UpdateUserRequest,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    return AuthController.update_current_user(current_user, update_data.dict(exclude_unset=True), db)
 
 # ============================================
 # SPOTIFY OAUTH ROUTES

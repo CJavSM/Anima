@@ -52,10 +52,14 @@ const Profile = () => {
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
+    username: user?.username || '',
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
     email: user?.email || ''
   });
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Iniciales para avatar fallback
   const initials = (() => {
@@ -72,17 +76,44 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    // Nota: No existe endpoint PUT/PATCH para actualizar usuario en el cliente actualmente.
-    // Guardamos los cambios localmente en el contexto para que la UI refleje la edición.
+    setErrors(null);
+    setSuccessMessage('');
     const updated = { ...user, ...form };
+
+    // Validación en cliente para username (evitar espacios y caracteres inválidos)
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,50}$/;
+    if (form.username && !usernameRegex.test(form.username)) {
+      setErrors('El nombre de usuario sólo puede contener letras, números, guiones y guiones bajos, sin espacios, y debe tener entre 3 y 50 caracteres.');
+      return;
+    }
+
+    setSaving(true);
     try {
-      // Actualizar contexto y localStorage
+      if (typeof authService.updateProfile === 'function') {
+        const resp = await authService.updateProfile(form);
+        const userResp = resp || updated;
+        if (typeof setUser === 'function') setUser(userResp);
+        setEditing(false);
+        setSuccessMessage('Perfil guardado correctamente.');
+        return;
+      }
+
+      // Fallback local
       setUser(updated);
       setEditing(false);
-      alert('Perfil actualizado localmente. Si deseas persistir cambios, implementa endpoint en el backend.');
+      setSuccessMessage('Perfil actualizado localmente.');
     } catch (e) {
-      console.error('Error guardando perfil localmente', e);
-      alert('No se pudo guardar el perfil');
+      console.error('Error guardando perfil', e);
+      // Extraer mensaje útil
+      let msg = 'No se pudo guardar el perfil';
+      if (e?.message) msg = e.message;
+      if (e?.response?.data?.detail) msg = e.response.data.detail;
+      if (Array.isArray(e?.response?.data)) {
+        msg = e.response.data.map(it => it.msg || it.message || JSON.stringify(it)).join('; ');
+      }
+      setErrors(msg);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -94,6 +125,22 @@ const Profile = () => {
         <div className="profile-card">
           <h3 className="profile-title">Tu Perfil</h3>
 
+          {successMessage && (
+            <div className="form-success" role="status">{successMessage}</div>
+          )}
+
+          {errors && (
+            <div className="form-error" role="alert">
+              {typeof errors === 'string' ? (
+                <p>{errors}</p>
+              ) : (
+                <ul>
+                  {errors.map((err, i) => <li key={i}>{err}</li>)}
+                </ul>
+              )}
+            </div>
+          )}
+
           <div className="profile-header">
             <div className="avatar-wrapper">
               {user?.profile_picture ? (
@@ -103,9 +150,27 @@ const Profile = () => {
               )}
             </div>
             <div className="header-info">
-              <h4 className="header-name">{user?.first_name} {user?.last_name}</h4>
-              <p className="header-email">{user?.email}</p>
-              <p className="header-username">@{user?.username}</p>
+              {!editing ? (
+                <>
+                  <h4 className="header-name">{user?.first_name} {user?.last_name}</h4>
+                  <p className="header-email">{user?.email}</p>
+                  <p className="header-username">@{user?.username}</p>
+                </>
+              ) : (
+                <div className="edit-fields">
+                  <label className="input-label">Usuario</label>
+                  <input name="username" value={form.username} onChange={handleChange} className="input-field" />
+
+                  <label className="input-label">Nombre</label>
+                  <input name="first_name" value={form.first_name} onChange={handleChange} className="input-field" />
+
+                  <label className="input-label">Apellido</label>
+                  <input name="last_name" value={form.last_name} onChange={handleChange} className="input-field" />
+
+                  <label className="input-label">Email</label>
+                  <input name="email" value={form.email} onChange={handleChange} className="input-field" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -148,9 +213,9 @@ const Profile = () => {
             {!editing ? (
               <button onClick={() => setEditing(true)} className="btn btn-primary">Editar perfil</button>
             ) : (
-              <>
-                <button onClick={handleSave} className="btn btn-primary">Guardar</button>
-                <button onClick={() => { setEditing(false); setForm({ first_name: user?.first_name||'', last_name: user?.last_name||'', email: user?.email||'' }); }} className="btn btn-secondary">Cancelar</button>
+                <>
+                <button onClick={handleSave} className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : 'Guardar'}</button>
+                <button onClick={() => { setEditing(false); setForm({ username: user?.username||'', first_name: user?.first_name||'', last_name: user?.last_name||'', email: user?.email||'' }); setErrors(null); setSuccessMessage(''); }} className="btn btn-secondary">Cancelar</button>
               </>
             )}
           </div>
