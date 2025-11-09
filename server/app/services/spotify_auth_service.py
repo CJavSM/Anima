@@ -243,7 +243,12 @@ class SpotifyAuthService:
         new_user = User(
             email=email,
             username=username,
-            password_hash=None,  # No tiene contraseña, solo Spotify
+            # Algunas bases de datos pueden tener password_hash NOT NULL en el esquema
+            # Para evitar violaciones de constraint, guardar un string vacío cuando
+            # el usuario se registra solo con Spotify. En la lógica de autenticación
+            # se trata un valor vacío/None como "sin contraseña" y solo permite
+            # login vía Spotify.
+            password_hash="",
             first_name=spotify_display_name,
             spotify_id=spotify_id,
             spotify_email=spotify_email,

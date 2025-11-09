@@ -190,6 +190,19 @@ const linkSpotify = async (code) => {
   }
 };
 
+const exchangeSpotifyCode = async (code) => {
+  try {
+    // Intercambiar el code por token en el backend y evitar seguir redirects
+    const { data } = await api.post(`/api/auth/spotify/exchange`, { code }, { skipAuth: true });
+    // Guardar sesión si viene el token
+    if (data?.access_token) saveSession({ access_token: data.access_token, user: data.user });
+    return data;
+  } catch (error) {
+    console.error('❌ [AuthService] Error intercambiando código de Spotify:', error);
+    throw error;
+  }
+};
+
 const disconnectSpotify = async () => {
   try {
     const { data } = await api.post('/api/auth/spotify/disconnect');
@@ -209,5 +222,6 @@ export const authService = {
   getSpotifyAuthUrl,
   getSpotifyLinkUrl,
   linkSpotify,
+  exchangeSpotifyCode,
   disconnectSpotify,
 };

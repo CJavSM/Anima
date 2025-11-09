@@ -9,6 +9,8 @@ const Profile = () => {
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
 
+  const [disconnecting, setDisconnecting] = useState(false);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -18,12 +20,23 @@ const Profile = () => {
 
   const handleDisconnectSpotify = async () => {
     try {
+      // Deshabilitar doble envío usando un flag local; actualizar contexto en lugar de recargar
+      setDisconnecting(true);
       await authService.disconnectSpotify();
+      // Obtener usuario actualizado del backend y actualizar el contexto/localStorage
+      try {
+        const refreshed = await authService.me();
+        if (typeof setUser === 'function') setUser(refreshed);
+      } catch (e) {
+        // Si no podemos obtener el usuario, limpiar la sesión por seguridad
+        console.warn('No se pudo refrescar usuario tras desconectar Spotify:', e);
+      }
       alert('Spotify desvinculado correctamente.');
-      window.location.reload();
     } catch (e) {
       console.error('Error desconectando Spotify', e);
       alert('No se pudo desvincular Spotify');
+    } finally {
+      setDisconnecting(false);
     }
   };
 
@@ -43,6 +56,15 @@ const Profile = () => {
     last_name: user?.last_name || '',
     email: user?.email || ''
   });
+
+  // Iniciales para avatar fallback
+  const initials = (() => {
+    try {
+      if (user?.first_name) return (user.first_name[0] || '').toUpperCase();
+      if (user?.username) return (user.username[0] || '').toUpperCase();
+      return '';
+    } catch { return ''; }
+  })();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,32 +93,23 @@ const Profile = () => {
       <div className="profile-content">
         <div className="profile-card">
           <h3 className="profile-title">Tu Perfil</h3>
+
+          <div className="profile-header">
+            <div className="avatar-wrapper">
+              {user?.profile_picture ? (
+                <img src={user.profile_picture} alt="Avatar" className="profile-avatar" />
+              ) : (
+                <div className="profile-avatar-initials">{initials}</div>
+              )}
+            </div>
+            <div className="header-info">
+              <h4 className="header-name">{user?.first_name} {user?.last_name}</h4>
+              <p className="header-email">{user?.email}</p>
+              <p className="header-username">@{user?.username}</p>
+            </div>
+          </div>
+
           <div className="profile-grid">
-            <div className="profile-field">
-              <span className="profile-label">Username</span>
-              <p className="profile-value">{user?.username}</p>
-            </div>
-
-            <div className="profile-field">
-              <span className="profile-label">Email</span>
-              {!editing ? (
-                <p className="profile-value">{user?.email}</p>
-              ) : (
-                <input name="email" value={form.email} onChange={handleChange} />
-              )}
-            </div>
-
-            <div className="profile-field">
-              <span className="profile-label">Nombre</span>
-              {!editing ? (
-                <p className="profile-value">{user?.first_name} {user?.last_name}</p>
-              ) : (
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input name="first_name" value={form.first_name} onChange={handleChange} placeholder="Nombre" />
-                  <input name="last_name" value={form.last_name} onChange={handleChange} placeholder="Apellido" />
-                </div>
-              )}
-            </div>
 
             <div className="profile-field">
               <span className="profile-label">Estado</span>
@@ -113,8 +126,13 @@ const Profile = () => {
                 {user?.spotify_connected ? (
                   <>
                     <span className="badge badge-success">Conectado</span>
-                    <button onClick={handleDisconnectSpotify} className="btn btn-link" style={{ marginLeft: 8 }}>
-                      Desvincular
+                    <button
+                      onClick={handleDisconnectSpotify}
+                      className="btn btn-link"
+                      style={{ marginLeft: 8 }}
+                      disabled={disconnecting}
+                    >
+                      {disconnecting ? 'Desvinculando...' : 'Desvincular'}
                     </button>
                   </>
                 ) : (

@@ -139,15 +139,26 @@ const AuthCallback = () => {
           return;
         }
 
-        // Si llegó sólo el code sin action, intentar canjear en backend (posible flow directo)
+        // Si llegó sólo el code sin action, llamar al endpoint JSON que intercambia el code
         if (code) {
           try {
-            // Llamar al endpoint que hace el intercambio en backend
-            const response = await fetch(`/api/auth/spotify/callback?code=${encodeURIComponent(code)}`);
-            // backend redirect normally handles this, pero por seguridad
+            const response = await authService.exchangeSpotifyCode(code);
+            // exchangeSpotifyCode guarda el token y el user en localStorage
+            if (response?.access_token) {
+              try {
+                if (typeof setUser === 'function') setUser(response.user);
+              } catch (e) {
+                console.warn('No se pudo actualizar AuthContext.setUser después de exchange:', e);
+              }
+              localStorage.setItem('token', response.access_token);
+              localStorage.setItem('user', JSON.stringify(response.user));
+            }
             navigate('/Home');
           } catch (e) {
-            console.error('Error procesando code:', e);
+            console.error('Error procesando code (exchange):', e);
+            // Mostrar un mensaje amigable si viene detail del backend
+            const errDetail = e?.response?.data?.detail || e?.message || 'Error al procesar autenticación con Spotify';
+            alert(errDetail);
             navigate('/login');
           }
           return;

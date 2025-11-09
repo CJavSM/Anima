@@ -27,3 +27,13 @@
 .badge-success { background: var(--green-50); color: var(--green-800); }
 
 .badge-warning { background: var(--yellow-100); color: var(--yellow-800); }
+
+/* Header avatar and basic info */
+.profile-header { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+.avatar-wrapper { width:72px; height:72px; flex:0 0 72px; }
+.profile-avatar { width:72px; height:72px; border-radius:50%; object-fit:cover; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.profile-avatar-initials { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; background:linear-gradient(135deg,#6366F1,#EC4899); box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.header-info { display:flex; flex-direction:column; }
+.header-name { margin:0; font-size:1.125rem; font-weight:700; }
+.header-email { margin:0; color:var(--gray-600); font-size:0.95rem; }
+.header-username { margin:0; color:var(--gray-500); font-size:0.85rem; }

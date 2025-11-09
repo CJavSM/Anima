@@ -4,6 +4,9 @@ from app.schemas.auth_schemas import UserRegister, UserLogin, TokenResponse, Use
 from app.services.auth_service import AuthService
 from app.services.spotify_auth_service import spotify_auth_service
 from app.models.user import User
+import logging
+
+logger = logging.getLogger("auth_controller")
 
 class AuthController:
     
@@ -120,18 +123,22 @@ class AuthController:
     def spotify_callback(code: str, db: Session) -> TokenResponse:
         """Maneja el callback de Spotify después de la autorización"""
         try:
+            logger.info(f"🔁 spotify_callback invoked with code={code[:10]}...")
             # Intercambiar código por tokens
             token_data = spotify_auth_service.exchange_code_for_token(code)
+            logger.info(f"✅ Tokens intercambiados (access_token present={ 'access_token' in token_data })")
 
             # Obtener información del usuario de Spotify
             spotify_user_data = spotify_auth_service.get_spotify_user_info(
                 token_data["access_token"]
             )
+            logger.info(f"✅ Spotify user fetched id={spotify_user_data.get('id')} email={spotify_user_data.get('email')}")
 
             # Crear o actualizar usuario
             user = spotify_auth_service.create_or_update_user_from_spotify(
                 spotify_user_data, token_data, db
             )
+            logger.info(f"✅ User created/updated id={user.id} username={user.username}")
 
             # Crear JWT token
             access_token = spotify_auth_service.create_user_token(user)
@@ -157,8 +164,11 @@ class AuthController:
                 user=user_response
             )
         except HTTPException as e:
+            logger.exception("HTTPException en spotify_callback")
             raise e
         except Exception as e:
+            # Log completo para depuración
+            logger.exception("Excepción inesperada en spotify_callback")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error en callback de Spotify: {str(e)}"

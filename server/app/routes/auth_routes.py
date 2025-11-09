@@ -184,10 +184,37 @@ def spotify_callback(
             status_code=status.HTTP_307_TEMPORARY_REDIRECT
         )
     except Exception as e:
+        # Incluir un mensaje de error más legible y codificado para evitar que se pierda
+        import urllib.parse
+        detail = str(e) if str(e) else "unknown_error"
         return RedirectResponse(
-            url=f"{frontend_redirect}?error={str(e)}",
+            url=f"{frontend_redirect}?error={urllib.parse.quote(detail)}",
             status_code=status.HTTP_307_TEMPORARY_REDIRECT
         )
+
+
+@router.post(
+    "/spotify/exchange",
+    response_model=TokenResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Intercambiar código de Spotify por token (JSON)",
+    description="Endpoint para que el frontend envíe el `code` recibido desde Spotify y el backend devuelva TokenResponse en JSON. Evita redirecciones desde el backend."
+)
+def spotify_exchange_code(
+    code: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Intercambia el `code` de Spotify por tokens y crea/actualiza el usuario.
+    Este endpoint devuelve la misma estructura que el flujo de callback normal,
+    pero en JSON, pensado para que el frontend lo consuma directamente.
+    """
+    try:
+        return AuthController.spotify_callback(code, db)
+    except Exception as e:
+        # Devolver un HTTPException con detalle legible
+        from fastapi import HTTPException
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 @router.get(
     "/spotify/link",
     status_code=status.HTTP_200_OK,
