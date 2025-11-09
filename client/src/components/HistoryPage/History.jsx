@@ -1,6 +1,86 @@
 import { useState, useEffect } from 'react';
 import './History.css';
 
+// Componente confiable para emociones que combina emoji + SVG como fallback
+const EmotionIcon = ({ emotion, size = "1.5rem" }) => {
+  const emotionMap = {
+    'HAPPY': { emoji: '😊', color: '#10B981' },
+    'SAD': { emoji: '😢', color: '#3B82F6' },
+    'ANGRY': { emoji: '😠', color: '#EF4444' },
+    'CONFUSED': { emoji: '😕', color: '#F59E0B' },
+    'DISGUSTED': { emoji: '🤢', color: '#8B5CF6' },
+    'SURPRISED': { emoji: '😮', color: '#EC4899' },
+    'CALM': { emoji: '😌', color: '#14B8A6' },
+    'FEAR': { emoji: '😨', color: '#6366F1' }
+  };
+
+  const emotionData = emotionMap[emotion] || { emoji: '😐', color: '#6B7280' };
+  
+  return (
+    <span 
+      style={{ 
+        fontSize: size,
+        color: emotionData.color,
+        fontFamily: 'Arial, sans-serif',
+        display: 'inline-block',
+        lineHeight: 1
+      }}
+      role="img"
+      aria-label={emotion}
+    >
+      {emotionData.emoji}
+    </span>
+  );
+};
+
+// Componentes de íconos SVG
+const CameraIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M23 19C23 20.1046 22.1046 21 21 21H3C1.89543 21 1 20.1046 1 19V8C1 6.89543 1.89543 6 3 6H7L9 3H15L17 6H21C22.1046 6 23 6.89543 23 8V19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="13" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const MusicIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 18V5L21 3V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const StarIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const XIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const StarFilledIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+  </svg>
+);
+
+const StarOutlineIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="3,6 5,6 21,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M19,6V20C19,21 18,22 17,22H7C6,22 5,21 5,20V6M8,6V4C8,3 9,2 10,2H14C15,2 16,3 16,4V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const History = ({ user, onClose }) => {
   const [activeTab, setActiveTab] = useState('analyses'); // 'analyses' o 'playlists'
   const [analyses, setAnalyses] = useState([]);
@@ -154,31 +234,39 @@ const History = ({ user, onClose }) => {
       <div className="history-modal" onClick={(e) => e.stopPropagation()}>
         <div className="history-header">
           <div>
-            <h2 className="history-title">Mi Historial 📊</h2>
+            <h2 className="history-title">Mi Historial</h2>
             <p className="history-subtitle">Revisa tus análisis y playlists guardadas</p>
           </div>
-          <button onClick={onClose} className="modal-close">✕</button>
+          <button onClick={onClose} className="modal-close">
+            <XIcon />
+          </button>
         </div>
 
         {/* Estadísticas */}
         {stats && (
           <div className="stats-section">
             <div className="stat-card">
-              <div className="stat-icon">📸</div>
+              <div className="stat-icon">
+                <CameraIcon />
+              </div>
               <div className="stat-info">
                 <span className="stat-label">Análisis</span>
                 <span className="stat-value">{stats.total_analyses}</span>
               </div>
             </div>
             <div className="stat-card">
-              <div className="stat-icon">🎵</div>
+              <div className="stat-icon">
+                <MusicIcon />
+              </div>
               <div className="stat-info">
                 <span className="stat-label">Playlists</span>
                 <span className="stat-value">{stats.total_saved_playlists}</span>
               </div>
             </div>
             <div className="stat-card">
-              <div className="stat-icon">⭐</div>
+              <div className="stat-icon">
+                <StarIcon />
+              </div>
               <div className="stat-info">
                 <span className="stat-label">Favoritas</span>
                 <span className="stat-value">{stats.favorite_playlists_count}</span>
@@ -186,7 +274,9 @@ const History = ({ user, onClose }) => {
             </div>
             {stats.most_common_emotion && (
               <div className="stat-card">
-                <div className="stat-icon">{getEmotionEmoji(stats.most_common_emotion)}</div>
+                <div className="stat-icon emotion-icon">
+                  <EmotionIcon emotion={stats.most_common_emotion} size="1.5rem" />
+                </div>
                 <div className="stat-info">
                   <span className="stat-label">Más común</span>
                   <span className="stat-value">{stats.most_common_emotion}</span>
@@ -202,13 +292,13 @@ const History = ({ user, onClose }) => {
             className={`tab-button ${activeTab === 'analyses' ? 'active' : ''}`}
             onClick={() => setActiveTab('analyses')}
           >
-            📸 Análisis
+            <CameraIcon /> Análisis
           </button>
           <button
             className={`tab-button ${activeTab === 'playlists' ? 'active' : ''}`}
             onClick={() => setActiveTab('playlists')}
           >
-            🎵 Playlists Guardadas
+            <MusicIcon /> Playlists Guardadas
           </button>
         </div>
 
@@ -235,7 +325,7 @@ const History = ({ user, onClose }) => {
                 checked={favoriteFilter}
                 onChange={(e) => setFavoriteFilter(e.target.checked)}
               />
-              Solo favoritas ⭐
+              Solo favoritas <StarIcon />
             </label>
           )}
         </div>
@@ -258,7 +348,9 @@ const History = ({ user, onClose }) => {
                 <div className="analyses-list">
                   {analyses.length === 0 ? (
                     <div className="empty-state">
-                      <p>📸</p>
+                      <div className="empty-icon">
+                        <CameraIcon />
+                      </div>
                       <p>No hay análisis todavía</p>
                     </div>
                   ) : (
@@ -269,7 +361,7 @@ const History = ({ user, onClose }) => {
                             className="emotion-badge"
                             style={{ backgroundColor: getEmotionColor(analysis.dominant_emotion) }}
                           >
-                            {getEmotionEmoji(analysis.dominant_emotion)} {analysis.dominant_emotion}
+                            <EmotionIcon emotion={analysis.dominant_emotion} size="1rem" /> {analysis.dominant_emotion}
                           </span>
                           <span className="analysis-date">{formatDate(analysis.analyzed_at)}</span>
                         </div>
@@ -287,7 +379,7 @@ const History = ({ user, onClose }) => {
                         </div>
                         {analysis.has_saved_playlist && (
                           <div className="has-playlist-badge">
-                            <span>🎵 Playlist guardada</span>
+                            <MusicIcon /> Playlist guardada
                           </div>
                         )}
                       </div>
@@ -298,7 +390,9 @@ const History = ({ user, onClose }) => {
                 <div className="playlists-list">
                   {playlists.length === 0 ? (
                     <div className="empty-state">
-                      <p>🎵</p>
+                      <div className="empty-icon">
+                        <MusicIcon />
+                      </div>
                       <p>No hay playlists guardadas</p>
                     </div>
                   ) : (
@@ -308,10 +402,14 @@ const History = ({ user, onClose }) => {
                           <div>
                             <h4 className="playlist-name">
                               {playlist.playlist_name}
-                              {playlist.is_favorite && <span className="favorite-star">⭐</span>}
+                              {playlist.is_favorite && (
+                                <span className="favorite-star">
+                                  <StarFilledIcon />
+                                </span>
+                              )}
                             </h4>
                             <p className="playlist-emotion">
-                              {getEmotionEmoji(playlist.emotion)} {playlist.emotion}
+                              <EmotionIcon emotion={playlist.emotion} size="1rem" /> {playlist.emotion}
                             </p>
                           </div>
                           <div className="playlist-actions">
@@ -320,14 +418,14 @@ const History = ({ user, onClose }) => {
                               className="action-btn"
                               title={playlist.is_favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                             >
-                              {playlist.is_favorite ? '⭐' : '☆'}
+                              {playlist.is_favorite ? <StarFilledIcon /> : <StarOutlineIcon />}
                             </button>
                             <button
                               onClick={() => deletePlaylist(playlist.id)}
                               className="action-btn delete"
                               title="Eliminar playlist"
                             >
-                              🗑️
+                              <TrashIcon />
                             </button>
                           </div>
                         </div>

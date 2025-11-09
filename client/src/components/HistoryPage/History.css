@@ -1,5 +1,4 @@
-
-
+/* Modal de Historial */
 .history-modal-overlay {
   position: fixed;
   top: 0;
@@ -29,6 +28,7 @@
   flex-direction: column;
 }
 
+/* Header del modal */
 .history-header {
   background: linear-gradient(135deg, var(--primary-50), var(--blue-50));
   padding: 2rem;
@@ -54,7 +54,25 @@
   color: var(--gray-700);
 }
 
-/* Estadísticas */
+.modal-close {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+/* Sección de estadísticas */
 .stats-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -75,12 +93,27 @@
 }
 
 .stat-icon {
-  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+  color: var(--primary-600);
+  flex-shrink: 0;
+}
+
+.stat-icon.emotion-icon {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  color: #D97706;
 }
 
 .stat-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .stat-label {
@@ -117,6 +150,9 @@
   transition: all 0.2s;
   position: relative;
   bottom: -2px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tab-button:hover {
@@ -197,8 +233,14 @@
   margin-top: 1rem;
 }
 
-.empty-state p:first-child,
-.error-state p:first-child {
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--gray-400);
+  margin-bottom: 1rem;
+}
+
+.error-icon {
   font-size: 3rem;
   margin: 0;
 }
@@ -329,7 +371,7 @@
 }
 
 .favorite-star {
-  font-size: 1rem;
+  color: #F59E0B;
 }
 
 .playlist-emotion {
@@ -353,8 +395,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1rem;
   transition: all 0.2s;
+  color: var(--gray-600);
 }
 
 .action-btn:hover {
@@ -364,6 +406,7 @@
 
 .action-btn.delete:hover {
   background: var(--red-100);
+  color: var(--red-600);
 }
 
 .playlist-description {
@@ -378,6 +421,27 @@
   gap: 0.5rem;
   font-size: 0.8125rem;
   color: var(--gray-500);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Responsive */
