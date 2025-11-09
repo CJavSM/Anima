@@ -37,10 +37,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run unit tests with coverage
-        working-directory: server
+      - name: Run unit tests with coverage (via run_tests.ps1)
         env:
-          PYTHONPATH: ${{ github.workspace }}/server/app
+          # PYTHONPATH should point to the server package root so `import app...` resolves to server/app
+          PYTHONPATH: ${{ github.workspace }}/server
           SPOTIFY_CLIENT_ID: test_client_id
           SPOTIFY_CLIENT_SECRET: test_client_secret
           AWS_ACCESS_KEY_ID: test_access_key
@@ -48,7 +48,8 @@ jobs:
           AWS_REGION: us-east-1
           SECRET_KEY: test_secret_key_for_jwt
         run: |
-          pytest app/tests/unit -v --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
+          # Use PowerShell Core to run the project's test runner script which produces coverage xml/html
+          pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File server/scripts/run_tests.ps1 -TestsPath server/tests/unit
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -153,10 +154,10 @@ jobs:
           echo "❌ Postgres not ready"
           exit 1
 
-      - name: Run integration tests with coverage
-        working-directory: server
+      - name: Run integration tests with coverage (via run_tests.ps1)
         env:
-          PYTHONPATH: ${{ github.workspace }}/server/app
+          # For integration tests also point PYTHONPATH to server root
+          PYTHONPATH: ${{ github.workspace }}/server
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/anima_test
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/anima_test
           DB_HOST: localhost
@@ -174,7 +175,7 @@ jobs:
           AWS_REGION: us-east-1
           ENVIRONMENT: test
         run: |
-          pytest app/tests/test_health.py -v --cov=app --cov-report=xml:coverage-integration.xml --cov-report=term-missing
+          pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File server/scripts/run_tests.ps1 -TestsPath server/tests/test_health.py
 
       - name: Upload integration coverage to Codecov
         uses: codecov/codecov-action@v4
