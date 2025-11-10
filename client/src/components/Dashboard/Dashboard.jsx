@@ -7,6 +7,8 @@ import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
 import { useEffect, useState } from 'react';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import usePrivateSidebar from '../../hooks/usePrivateSidebar';
+import PrivateSidebar from '../Shared/Sidebar';
 
 // Componentes de íconos SVG
 const CameraIcon = () => (
@@ -30,7 +32,7 @@ const EmotionIcon = ({ emotion, size = "1.5rem" }) => {
   };
 
   const emotionData = emotionMap[emotion] || { emoji: '😐', color: '#6B7280' };
-  
+
   return (
     <span 
       style={{ 
@@ -90,6 +92,7 @@ const Clock = () => (
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
 
   const handleLogout = () => {
     logout();
@@ -305,7 +308,8 @@ const Dashboard = () => {
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
       </div>
-      <SharedNavbar />
+  <SharedNavbar onToggleSidebar={toggleSidebar} />
+  <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <div className="dashboard-content">
         <div className="dashboard-card">

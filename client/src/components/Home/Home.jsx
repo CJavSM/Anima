@@ -5,11 +5,14 @@ import SharedNavbar from '../Shared/SharedNavbar';
 import emotionService from '../../services/emotionService';
 import MusicRecommendations from '../MusicRecommendations/MusicRecommendations';
 import './Home.css';
+import usePrivateSidebar from '../../hooks/usePrivateSidebar';
+import PrivateSidebar from '../Shared/Sidebar';
 
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
   
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -199,7 +202,8 @@ const Home = () => {
 
   return (
     <div className="home">
-      <SharedNavbar />
+       <SharedNavbar onToggleSidebar={toggleSidebar} />
+        <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <div className="home-content">
         <div className="home-header">

@@ -8,6 +8,8 @@ import { authService } from '../../services/authService';
 import emotionService from '../../services/emotionService';
 import musicService from '../../services/musicService';
 import './PlaylistsPage.css';
+import usePrivateSidebar from '../../hooks/usePrivateSidebar';
+import PrivateSidebar from '../Shared/Sidebar';
 
 const PlaylistsPage = () => {
   const { user } = useAuth();
@@ -30,6 +32,8 @@ const PlaylistsPage = () => {
   // Estado para reproducir preview
   const [playingPreview, setPlayingPreview] = useState(null);
   const [audioElement, setAudioElement] = useState(null);
+
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
 
   useEffect(() => {
     loadPlaylists();
@@ -153,7 +157,8 @@ const PlaylistsPage = () => {
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
       </div>
-      <SharedNavbar />
+       <SharedNavbar onToggleSidebar={toggleSidebar} />
+        <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       {/* Contenido Principal */}
       <div className="page-container smooth-entrance">

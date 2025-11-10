@@ -36,10 +36,10 @@ const Sidebar = ({ isOpen, onClose, menuItems = [] }) => {
   // Menú por defecto para páginas privadas
   const defaultPrivateItems = [
     { path: '/home', label: 'Inicio', icon: '🏠' },
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/profile', label: 'Perfil', icon: '👤' },
     { path: '/history', label: 'Historial', icon: '📈' },
-    { path: '/playlists', label: 'Playlists', icon: '🎵' }
+    { path: '/playlists', label: 'Playlists', icon: '🎵' },
+    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/profile', label: 'Perfil', icon: '👤' }
   ];
 
   const items = menuItems.length > 0 

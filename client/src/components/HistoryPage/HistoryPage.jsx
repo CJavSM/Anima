@@ -5,6 +5,8 @@ import SharedNavbar from '../Shared/SharedNavbar';
 import historyService from '../../services/historyService';
 import emotionService from '../../services/emotionService';
 import './HistoryPage.css';
+import usePrivateSidebar from '../../hooks/usePrivateSidebar';
+import PrivateSidebar from '../Shared/Sidebar';
 
 // Componente confiable para emociones que combina emoji + SVG como fallback
 const EmotionIcon = ({ emotion, size = "1.5rem" }) => {
@@ -94,6 +96,7 @@ const UserIcon = () => (
 const HistoryPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
   
   const [analyses, setAnalyses] = useState([]);
   const [stats, setStats] = useState(null);
@@ -166,7 +169,8 @@ const HistoryPage = () => {
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
       </div>
-      <SharedNavbar />
+       <SharedNavbar onToggleSidebar={toggleSidebar} />
+        <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       {/* Contenido Principal */}
       <div className="page-container">

@@ -1,38 +1,6 @@
 import { useState, useEffect } from 'react';
 import './History.css';
 
-// Componente confiable para emociones que combina emoji + SVG como fallback
-const EmotionIcon = ({ emotion, size = "1.5rem" }) => {
-  const emotionMap = {
-    'HAPPY': { emoji: '😊', color: '#10B981' },
-    'SAD': { emoji: '😢', color: '#3B82F6' },
-    'ANGRY': { emoji: '😠', color: '#EF4444' },
-    'CONFUSED': { emoji: '😕', color: '#F59E0B' },
-    'DISGUSTED': { emoji: '🤢', color: '#8B5CF6' },
-    'SURPRISED': { emoji: '😮', color: '#EC4899' },
-    'CALM': { emoji: '😌', color: '#14B8A6' },
-    'FEAR': { emoji: '😨', color: '#6366F1' }
-  };
-
-  const emotionData = emotionMap[emotion] || { emoji: '😐', color: '#6B7280' };
-  
-  return (
-    <span 
-      style={{ 
-        fontSize: size,
-        color: emotionData.color,
-        fontFamily: 'Arial, sans-serif',
-        display: 'inline-block',
-        lineHeight: 1
-      }}
-      role="img"
-      aria-label={emotion}
-    >
-      {emotionData.emoji}
-    </span>
-  );
-};
-
 // Componentes de íconos SVG
 const CameraIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -274,9 +242,7 @@ const History = ({ user, onClose }) => {
             </div>
             {stats.most_common_emotion && (
               <div className="stat-card">
-                <div className="stat-icon emotion-icon">
-                  <EmotionIcon emotion={stats.most_common_emotion} size="1.5rem" />
-                </div>
+                <div className="stat-icon emotion-icon">{getEmotionEmoji(stats.most_common_emotion)}</div>
                 <div className="stat-info">
                   <span className="stat-label">Más común</span>
                   <span className="stat-value">{stats.most_common_emotion}</span>
@@ -361,7 +327,7 @@ const History = ({ user, onClose }) => {
                             className="emotion-badge"
                             style={{ backgroundColor: getEmotionColor(analysis.dominant_emotion) }}
                           >
-                            <EmotionIcon emotion={analysis.dominant_emotion} size="1rem" /> {analysis.dominant_emotion}
+                            {getEmotionEmoji(analysis.dominant_emotion)} {analysis.dominant_emotion}
                           </span>
                           <span className="analysis-date">{formatDate(analysis.analyzed_at)}</span>
                         </div>
@@ -409,7 +375,7 @@ const History = ({ user, onClose }) => {
                               )}
                             </h4>
                             <p className="playlist-emotion">
-                              <EmotionIcon emotion={playlist.emotion} size="1rem" /> {playlist.emotion}
+                              {getEmotionEmoji(playlist.emotion)} {playlist.emotion}
                             </p>
                           </div>
                           <div className="playlist-actions">

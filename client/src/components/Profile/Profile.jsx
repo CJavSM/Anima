@@ -4,10 +4,13 @@ import './Profile.css';
 import { authService } from '../../services/authService';
 import SharedNavbar from '../Shared/SharedNavbar';
 import { useState } from 'react';
+import usePrivateSidebar from '../../hooks/usePrivateSidebar';
+import PrivateSidebar from '../Shared/Sidebar';
 
 const Profile = () => {
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
+  const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
 
   const [disconnecting, setDisconnecting] = useState(false);
 
@@ -119,7 +122,8 @@ const Profile = () => {
 
   return (
     <div className="profile-page">
-      <SharedNavbar />
+       <SharedNavbar onToggleSidebar={toggleSidebar} />
+        <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       <div className="profile-content">
         <div className="profile-card">

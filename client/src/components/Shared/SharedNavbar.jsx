@@ -7,7 +7,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './SharedNavbar.css';
 import Logo from './Logo';
 
-const SharedNavbar = () => {
+
+// Agregar al inicio del componente (después de las declaraciones de hooks)
+const SharedNavbar = ({ onToggleSidebar }) => {  // Agregar esta prop
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,6 +27,15 @@ const SharedNavbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-content">
+          {/* Agregar botón hamburguesa ANTES del brand */}
+          <button 
+            className="navbar-toggle mobile-only"
+            onClick={onToggleSidebar}
+            aria-label="Abrir menú"
+          >
+            ☰
+          </button>
+
           <div
             className="navbar-brand"
             onClick={() => navigate('/home')}
@@ -34,7 +45,8 @@ const SharedNavbar = () => {
             <span className="brand-text">Ánima</span>
           </div>
           
-          <div className="navbar-menu">
+          {/* Agregar clase desktop-only a navbar-menu */}
+          <div className="navbar-menu desktop-only">
             <button 
               onClick={() => navigate('/home')} 
               className={`nav-link ${isActive('/home')}`}
@@ -67,7 +79,8 @@ const SharedNavbar = () => {
             </button>
           </div>
           
-          <div className="navbar-user">
+          {/* Agregar clase desktop-only a navbar-user */}
+          <div className="navbar-user desktop-only">
             <span
               className="navbar-username"
               onClick={() => navigate('/profile')}

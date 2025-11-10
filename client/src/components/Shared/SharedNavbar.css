@@ -203,3 +203,40 @@
     font-size: 0.875rem;
   }
 }
+
+/* Botón hamburguesa para mobile */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--gray-700);
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.navbar-toggle:hover {
+  background: rgba(58, 29, 225, 0.08);
+  color: var(--primary);
+}
+
+/* Responsive - mostrar botón hamburguesa en mobile */
+@media (max-width: 968px) {
+  .navbar-toggle {
+    display: block;
+  }
+  
+  .navbar-menu {
+    display: none !important;
+  }
+  
+  .navbar-user {
+    display: none !important;
+  }
+  
+  .navbar-brand {
+    margin: 0 auto; /* Centrar brand en mobile */
+  }
+}
