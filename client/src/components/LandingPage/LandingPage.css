@@ -10,31 +10,6 @@
   box-sizing: border-box;
 }
 
-:root {
-  /* Nueva paleta de colores principal */
-  --primary: #3a1de1;
-  --primary-dark: #2d14b8;
-  --primary-light: #5f3ae7;
-  --secondary: #8356ef;
-  --accent: #a671f7;
-  --accent-light: #c98dff;
-  
-  /* Grises */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-  
-  /* Gradientes */
-  --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
-  --gradient-accent: linear-gradient(135deg, var(--accent-light), var(--accent));
-  --gradient-hero: linear-gradient(135deg, rgba(58, 29, 225, 0.1), rgba(131, 86, 239, 0.1));
-}
-
 .landing-page {
   min-height: 100vh;
   background: var(--gray-50);

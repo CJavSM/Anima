@@ -116,29 +116,58 @@ const Home = () => {
   };
 
   const startCamera = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'user',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
-      });
-      setStream(mediaStream);
-      setShowCamera(true);
-      setError('');
-      
-      // Esperar un momento para que el video ref esté disponible
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-        }
-      }, 100);
-    } catch (err) {
-      console.error('Error al acceder a la cámara:', err);
-      setError('No se pudo acceder a la cámara. Verifica los permisos.');
+  setError('');
+
+  try {
+    // Verificar si el navegador soporta getUserMedia
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setError('Tu navegador no soporta acceso a cámara. Intenta con Chrome, Firefox o Safari.');
+      return;
     }
-  };
+
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+      video: { 
+        facingMode: 'user',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      } 
+    });
+    
+    setStream(mediaStream);
+    setShowCamera(true);
+    setError('');
+    
+    // Esperar un momento para que el video ref esté disponible
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    }, 100);
+  } catch (err) {
+    console.error('Error al acceder a la cámara:', err);
+    
+    // Mensajes de error específicos según el tipo de problema
+    let errorMessage = '';
+    
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      errorMessage = 'Permisos de cámara denegados. Por favor, permite el acceso a la cámara en la configuración de tu navegador.';
+    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      errorMessage = 'No se encontró ninguna cámara en tu dispositivo. Conecta una cámara e intenta de nuevo.';
+    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+      errorMessage = 'La cámara está siendo usada por otra aplicación. Cierra otras apps que puedan estar usando la cámara.';
+    } else if (err.name === 'OverconstrainedError' || err.name === 'ConstraintNotSatisfiedError') {
+      errorMessage = 'La cámara no cumple con los requisitos necesarios. Intenta con una cámara diferente.';
+    } else if (err.name === 'NotSupportedError') {
+      errorMessage = 'Tu navegador no soporta acceso a cámara. Actualiza tu navegador o usa Chrome, Firefox o Safari.';
+    } else if (err.name === 'AbortError') {
+      errorMessage = 'Se interrumpió el acceso a la cámara. Intenta de nuevo.';
+    } else {
+      errorMessage = 'Error inesperado al acceder a la cámara. Verifica que tu cámara esté funcionando correctamente.';
+    }
+    
+    setError(errorMessage);
+  }
+};
 
   const stopCamera = () => {
     if (stream) {
@@ -222,6 +251,34 @@ const Home = () => {
                 <p className="upload-description">
                   Elegí cómo querés capturar tu momento
                 </p>
+
+                {/* Mostrar error aquí si existe */}
+                {error && (
+                  <div className="alert alert-error">
+                    <div className="error-icon">📷</div>
+                    <div className="error-content">
+                      <p className="error-title">Problema con la cámara</p>
+                      <p className="error-message">{error}</p>
+                      <div className="error-actions">
+                        <button 
+                          onClick={() => {
+                            setError('');
+                            startCamera();
+                          }} 
+                          className="btn btn-secondary btn-small"
+                        >
+                          🔄 Reintentar
+                        </button>
+                        <button 
+                          onClick={() => setError('')} 
+                          className="btn btn-ghost btn-small"
+                        >
+                          ✕ Cerrar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="upload-options">
                   <button onClick={startCamera} className="btn btn-primary btn-camera">
@@ -274,9 +331,14 @@ const Home = () => {
                   <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
                 </div>
                 
+                
                 {error && (
                   <div className="alert alert-error">
-                    {error}
+                    <div className="error-icon">📷</div>
+                    <div className="error-content">
+                      <p className="error-title">Problema con la cámara</p>
+                      <p className="error-message">{error}</p>
+                    </div>
                   </div>
                 )}
                 

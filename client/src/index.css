@@ -349,3 +349,39 @@ body {
     display: none !important;
   }
 }
+
+/* Utilidades adicionales para consistencia */
+.smooth-entrance {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.error-icon {
+  color: #ef4444;
+}
+
+.success-icon {
+  color: #10b981;
+}
+
+.warning-icon {
+  color: #f59e0b;
+}
+
+/* Mejorar animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
