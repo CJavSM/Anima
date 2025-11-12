@@ -7,9 +7,10 @@ from app.schemas.history_schemas import (
     UpdatePlaylistRequest,
     HistoryFilters
 )
+from datetime import date
 from fastapi import HTTPException, status
 from typing import Optional, List, Dict, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -403,6 +404,27 @@ class HistoryService:
                 }
                 for date, positive, negative in daily_sentiment
             ]
+
+            # Calcular límite de "hoy" en UTC para evitar discrepancias por zona horaria
+            today_utc = datetime.now(timezone.utc).date()
+            today_start = datetime.combine(today_utc, datetime.min.time()).replace(tzinfo=timezone.utc)
+
+            today_emotions = db.query(
+                EmotionAnalysis.dominant_emotion,
+                func.count(EmotionAnalysis.id).label('count')
+            ).filter(
+                EmotionAnalysis.user_id == user_id,
+                EmotionAnalysis.created_at >= today_start
+            ).group_by(
+                EmotionAnalysis.dominant_emotion
+            ).all()
+            
+            today_emotions_breakdown = {emotion: count for emotion, count in today_emotions}
+            today_total = sum(today_emotions_breakdown.values())
+
+            # Use INFO so message appears with default logging level
+            logger.info(f"[HistoryService] today_start={today_start.isoformat()}, today_emotions={today_emotions_breakdown}, today_total={today_total}")
+
             
             return {
                 'total_analyses': total_analyses or 0,
@@ -416,7 +438,9 @@ class HistoryService:
                 'daily_analyses': daily_breakdown,
                 'positive_count': positive_count,
                 'negative_count': negative_count,
-                'sentiment_by_day': sentiment_by_day
+                'sentiment_by_day': sentiment_by_day,
+                'today_emotions': today_emotions_breakdown,
+                'today_total': today_total
             }
             
         except Exception as e:

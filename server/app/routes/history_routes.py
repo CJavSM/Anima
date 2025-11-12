@@ -131,6 +131,10 @@ def get_user_stats(
         'positive_count': stats.get('positive_count', 0),
         'negative_count': stats.get('negative_count', 0),
         'sentiment_by_day': stats.get('sentiment_by_day', [])
+        ,
+        # Estadísticas de hoy (conteo por emoción y total)
+        'today_emotions': stats.get('today_emotions', {}),
+        'today_total': stats.get('today_total', 0)
     }
 
 # ============ RUTAS DE PLAYLISTS ============

@@ -133,9 +133,17 @@ const Dashboard = () => {
       setLoading(true);
       try {
         const res = await historyService.getStats();
-        if (res.success && mounted) {
+        console.debug('📊 [Dashboard] getStats response:', res);
+        if (!mounted) return;
+
+        if (res && res.success) {
           setStats(res.data);
           setRecent(res.data.recent_activity || []);
+        } else {
+          // Manejar errores explícitos provenientes del servicio
+          const message = res?.error || 'No se pudieron cargar las estadísticas';
+          console.warn('⚠️ [Dashboard] getStats indicó fallo:', message);
+          setError(message);
         }
       } catch (e) {
         console.error('Error cargando estadísticas:', e);
@@ -206,6 +214,36 @@ const Dashboard = () => {
           borderColor: 'rgba(99, 102, 241, 1)',
           borderWidth: 2,
           borderRadius: 4,
+        },
+      ],
+    };
+  })();
+
+    // Gráfica: Emociones de Hoy
+  const todayEmotionsChartData = (() => {
+    if (!stats || !stats.today_emotions) return null;
+    const entries = Object.entries(stats.today_emotions);
+    
+    // Si no hay análisis hoy, retornar null
+    if (entries.length === 0) return null;
+    
+    // Ordenar por cantidad (mayor a menor)
+    const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
+    
+    const labels = sortedEntries.map(([emotion]) => translateEmotion(emotion));
+    const data = sortedEntries.map(([, count]) => count);
+    const colors = sortedEntries.map(([emotion]) => getEmotionColor(emotion) || '#888');
+    
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Cantidad de análisis',
+          data,
+          backgroundColor: colors,
+          borderColor: colors,
+          borderWidth: 2,
+          borderRadius: 8,
         },
       ],
     };
@@ -375,6 +413,8 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+
+
 
               {/* Resumen de la Semana - MOVIDO ANTES DE LAS GRÁFICAS */}
               {stats && stats.daily_analyses && Object.keys(stats.daily_analyses).length > 0 && (
@@ -640,7 +680,7 @@ const Dashboard = () => {
                   </div>
                 )}
 
-                {/* Emociones Semanales */}
+                {/* Emociones de la Semana */}
                 {weeklyEmotionsChartData && chartsMounted && (
                   <div className="chart-card">
                     <h3 className="section-title">
@@ -661,7 +701,74 @@ const Dashboard = () => {
                     </div>
                   </div>
                 )}
-              </div>
+
+                {/* Emociones de Hoy (ahora: barra horizontal en lugar de dona) */}
+                {chartsMounted && stats && (
+                  <div className="chart-card">
+                    <h3 className="section-title">
+                      <Clock />
+                      Emociones de Hoy
+                    </h3>
+                    <div className="chart-container">
+                      {todayEmotionsChartData ? (
+                        // Mostrar como barra horizontal para facilitar lectura
+                        <Bar
+                          data={todayEmotionsChartData}
+                          options={{
+                            indexAxis: 'y', // horizontal bars
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: { display: false },
+                              title: { display: false },
+                              tooltip: {
+                                callbacks: {
+                                  label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.x ?? context.parsed; // horizontal bar parsed value
+                                    const total = stats?.today_total || 0;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                  }
+                                }
+                              }
+                            },
+                            scales: {
+                              x: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 },
+                                grid: { color: 'rgba(156, 163, 175, 0.15)' }
+                              },
+                              y: {
+                                grid: { display: false }
+                              }
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="empty-chart-placeholder" style={{ padding: '2rem', textAlign: 'center' }}>
+                          <p style={{ margin: 0, fontSize: '1rem', color: 'var(--gray-700)' }}>
+                            No hay análisis hoy para mostrar.
+                          </p>
+                          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--gray-500)' }}>
+                            Realiza un análisis para ver tus emociones del día.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    {stats?.today_total > 0 && (
+                      <div style={{ 
+                        textAlign: 'center', 
+                        marginTop: '1rem', 
+                        fontSize: '0.875rem', 
+                        color: 'var(--gray-600)' 
+                      }}>
+                        Total de análisis hoy: <strong>{stats.today_total}</strong>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>  
 
               {/* Actividad Reciente - MOVIDO ANTES DE LAS GRÁFICAS */}
               <div className="recent-activity-section">
