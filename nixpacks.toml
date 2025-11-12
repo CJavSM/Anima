@@ -3,12 +3,18 @@ nixPkgs = ["python311", "nodejs-18_x", "postgresql"]
 
 [phases.install]
 cmds = [
-    "cd server && pip install -r requirements.txt",
+    "cd server && python -m pip install --upgrade pip",
+    "cd server && python -m pip install -r requirements.txt",
     "cd client && npm install"
 ]
 
 [phases.build]
-cmds = ["cd client && npm run build"]
+cmds = [
+    "cd client && npm run build"
+]
 
 [start]
-cmd = "cd server && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = "cd server && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.11"
