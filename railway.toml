@@ -1,6 +1,11 @@
 [build]
-builder = "nixpacks"
-buildCommand = "cd client && npm install && npm run build && cd ../server && pip install -r requirements.txt"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "cd server && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+restartPolicyType = "ON_FAILURE"
 
 [deploy]
 startCommand = "cd server && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
