@@ -1,11 +1,12 @@
 [phases.setup]
-nixPkgs = ["python311", "nodejs-18_x", "postgresql"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv", "nodejs-18_x"]
 
 [phases.install]
 cmds = [
-    "cd server && python -m pip install --upgrade pip",
-    "cd server && python -m pip install -r requirements.txt",
-    "cd client && npm install"
+    "python3.11 -m ensurepip --upgrade",
+    "cd server && python3.11 -m pip install --upgrade pip",
+    "cd server && python3.11 -m pip install -r requirements.txt",
+    "cd client && npm ci"
 ]
 
 [phases.build]
@@ -14,7 +15,8 @@ cmds = [
 ]
 
 [start]
-cmd = "cd server && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = "cd server && python3.11 -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 
 [variables]
-NIXPACKS_PYTHON_VERSION = "3.11"
+PYTHONUNBUFFERED = "1"
+NODE_ENV = "production"
