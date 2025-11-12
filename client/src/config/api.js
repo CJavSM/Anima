@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 
+                (import.meta.env.PROD ? '' : 'http://localhost:8000');
 
 console.log('🌐 [API Config] Configurando axios con URL:', API_URL);
 
@@ -9,7 +10,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 segundos de timeout
+  timeout: 10000,
 });
 
 // ============================================

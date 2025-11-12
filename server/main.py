@@ -1,3 +1,4 @@
+from app.routes import health_routes
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import auth_routes, contact_routes
@@ -57,7 +58,22 @@ app.add_middleware(
     expose_headers=["*"],  # Expone todos los headers en la respuesta
 )
 
+
+
 logger.info(f"✅ CORS configurado con {len(origins)} orígenes permitidos")
+
+app = FastAPI(
+    title="Ánima API",
+    description="API para análisis de emociones y recomendaciones musicales",
+    version="1.0.0"
+)
+
+# CORS
+origins = [
+    os.getenv("FRONTEND_URL", "http://localhost:5173"),
+    "http://localhost:5173",
+    "http://localhost:5174",
+]
 
 # ============================================
 # INCLUIR RUTAS
@@ -70,6 +86,7 @@ app.include_router(emotion_routes.router)
 app.include_router(music_routes.router)
 app.include_router(history_routes.router)
 app.include_router(spotify_routes.router)
+app.include_router(health_routes.router, tags=["Health"])
 
 # Ruta raíz
 @app.get("/")
@@ -166,6 +183,52 @@ def health_db():
     except Exception as e:
         logger.exception("❌ DB health check failed: %s", e)
         return {"status": "error", "error": str(e)}
+    
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    # Railway proporciona esta variable automáticamente
+    railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN")
+    if railway_domain:
+        origins.append(f"https://{railway_domain}")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Servir archivos estáticos del frontend (solo en producción)
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    client_dist = Path(__file__).parent.parent.parent / "client" / "dist"
+    
+    if client_dist.exists():
+        # Servir archivos estáticos
+        app.mount("/assets", StaticFiles(directory=str(client_dist / "assets")), name="assets")
+        
+        # Servir index.html para todas las rutas no-API
+        @app.get("/{full_path:path}")
+        async def serve_spa(full_path: str):
+            # Si es una ruta de API, dejar que FastAPI la maneje
+            if full_path.startswith("api/"):
+                return {"error": "Not found"}
+            
+            # Servir archivos estáticos si existen
+            file_path = client_dist / full_path
+            if file_path.is_file():
+                return FileResponse(file_path)
+            
+            # Caso contrario, servir index.html (SPA)
+            return FileResponse(client_dist / "index.html")
+
+# Ruta de health check
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "anima-api",
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+    }
 
 if __name__ == "__main__":
     import uvicorn
