@@ -1,5 +1,5 @@
 graph TB
-    subgraph "Cliente - Frontend"
+    subgraph Cliente["Cliente - Frontend"]
         A[React Application]
         A1[Pages/Components]
         A2[Context API]
@@ -10,7 +10,7 @@ graph TB
         A --> A3
     end
     
-    subgraph "Servidor - Backend FastAPI"
+    subgraph Servidor["Servidor - Backend FastAPI"]
         B[API Routes]
         C[Controllers]
         D[Services]
@@ -23,7 +23,7 @@ graph TB
         F -.-> B
     end
     
-    subgraph "Servicios Externos"
+    subgraph Externos["Servicios Externos"]
         G[(PostgreSQL)]
         H[AWS Rekognition]
         I[Spotify API]
@@ -36,8 +36,14 @@ graph TB
     D -->|spotipy| I
     D -->|smtplib| J
     
-    style A fill:#61dafb,stroke:#333,stroke-width:2px
-    style B fill:#009688,stroke:#333,stroke-width:2px
-    style G fill:#336791,stroke:#333,stroke-width:2px
-    style H fill:#ff9900,stroke:#333,stroke-width:2px
-    style I fill:#1db954,stroke:#333,stroke-width:2px
+    classDef frontend fill:#61dafb,stroke:#333,stroke-width:2px
+    classDef backend fill:#009688,stroke:#333,stroke-width:2px
+    classDef database fill:#336791,stroke:#333,stroke-width:2px
+    classDef aws fill:#ff9900,stroke:#333,stroke-width:2px
+    classDef spotify fill:#1db954,stroke:#333,stroke-width:2px
+    
+    class A frontend
+    class B backend
+    class G database
+    class H aws
+    class I spotify
