@@ -1,14 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import historyService from '../../services/historyService';
 import spotifyService from '../../services/spotifyService';
+import './AuthCallback.css';
+import Alert from '../Shared/Alert';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setUser, refreshUser } = useAuth();
+  const [alert, setAlert] = useState({ message: '', type: 'info' });
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -35,11 +38,11 @@ const AuthCallback = () => {
             // Si el usuario ya tiene token, llevarlo a Home, sino a Login
             const tokenNow = localStorage.getItem('token');
             if (tokenNow) {
-              alert('Autenticación cancelada en Spotify');
-              navigate('/home');
+              setAlert({ message: 'Autenticación cancelada en Spotify', type: 'info' });
+              setTimeout(() => navigate('/home'), 1200);
             } else {
-              alert('Autenticación cancelada en Spotify. Puedes iniciar sesión normalmente.');
-              navigate('/login');
+              setAlert({ message: 'Autenticación cancelada en Spotify. Puedes iniciar sesión normalmente.', type: 'info' });
+              setTimeout(() => navigate('/login'), 1200);
             }
           } catch (e) {
             navigate('/login');
@@ -74,7 +77,9 @@ const AuthCallback = () => {
           try {
             const result = await authService.linkSpotify(code);
             // linkSpotify guarda el nuevo token en localStorage
-            alert('Cuenta de Spotify vinculada correctamente');
+            setAlert({ message: 'Cuenta de Spotify vinculada correctamente', type: 'success' });
+            // dejar que el usuario vea el mensaje antes de navegar
+            await new Promise(r => setTimeout(r, 1100));
             // Actualizar AuthContext sin recargar toda la app
             try {
               let refreshed = null;
@@ -103,10 +108,10 @@ const AuthCallback = () => {
                           tracks: trackIds,
                           isPublic: false
                         });
-                        if (!spRes.success) {
+                          if (!spRes.success) {
                           console.warn('No se pudo crear la playlist en Spotify tras vincular:', spRes.error);
                           // dejar al usuario saber que la guardó en Anima
-                          alert('Playlist guardada en Anima, pero no se pudo crear en Spotify automáticamente. Puedes intentar crearla manualmente.');
+                          setAlert({ message: 'Playlist guardada en Anima, pero no se pudo crear en Spotify automáticamente. Puedes intentar crearla manualmente.', type: 'info' });
                         }
                       } catch (e) {
                         console.error('Error creando playlist en Spotify tras vincular:', e);
@@ -133,8 +138,10 @@ const AuthCallback = () => {
             }
           } catch (e) {
             console.error('Error vinculando Spotify:', e);
-            alert('No se pudo vincular la cuenta de Spotify');
-            navigate('/Home');
+            // Mostrar detalle si viene del backend
+            const detail = e?.response?.data?.detail || 'No se pudo vincular la cuenta de Spotify';
+            setAlert({ message: detail, type: 'error' });
+            setTimeout(() => navigate('/Home'), 1800);
           }
           return;
         }
@@ -154,12 +161,12 @@ const AuthCallback = () => {
               localStorage.setItem('user', JSON.stringify(response.user));
             }
             navigate('/Home');
-          } catch (e) {
+            } catch (e) {
             console.error('Error procesando code (exchange):', e);
             // Mostrar un mensaje amigable si viene detail del backend
             const errDetail = e?.response?.data?.detail || e?.message || 'Error al procesar autenticación con Spotify';
-            alert(errDetail);
-            navigate('/login');
+            setAlert({ message: errDetail, type: 'error' });
+            setTimeout(() => navigate('/login'), 1600);
           }
           return;
         }
@@ -174,8 +181,22 @@ const AuthCallback = () => {
   }, [location.search, navigate, setUser, refreshUser]);
 
   return (
-    <div style={{ padding: 24 }}>
-      <p>Procesando autenticación... Por favor espera.</p>
+    <div className="authcallback-page">
+      <Alert
+        message={alert.message}
+        type={alert.type}
+        onClose={() => setAlert({ message: '', type: 'info' })}
+      />
+      <div className="authcallback-card">
+        <div className="authcallback-spinner" aria-hidden="true" />
+        <h2 className="authcallback-title">Procesando autenticación</h2>
+        <p className="authcallback-subtitle">Por favor espera — estamos verificando tus credenciales y configurando tu sesión.</p>
+
+        <div className="authcallback-actions">
+          <a className="authcallback-link" href="/login">Volver al inicio de sesión</a>
+          <a className="authcallback-link" href="/">Ir a la página principal</a>
+        </div>
+      </div>
     </div>
   );
 };

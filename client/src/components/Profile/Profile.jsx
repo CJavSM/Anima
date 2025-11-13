@@ -6,6 +6,7 @@ import SharedNavbar from '../Shared/SharedNavbar';
 import { useState } from 'react';
 import usePrivateSidebar from '../../hooks/usePrivateSidebar';
 import PrivateSidebar from '../Shared/Sidebar';
+import Alert from '../Shared/Alert';
 
 const Profile = () => {
   const { user, logout, setUser } = useAuth();
@@ -13,6 +14,7 @@ const Profile = () => {
   const { isOpen: sidebarOpen, openSidebar, closeSidebar, toggleSidebar } = usePrivateSidebar();
 
   const [disconnecting, setDisconnecting] = useState(false);
+  const [alert, setAlert] = useState({ message: '', type: 'info' });
 
   const handleLogout = () => {
     logout();
@@ -34,10 +36,19 @@ const Profile = () => {
         // Si no podemos obtener el usuario, limpiar la sesión por seguridad
         console.warn('No se pudo refrescar usuario tras desconectar Spotify:', e);
       }
-      alert('Spotify desvinculado correctamente.');
+      setAlert({ message: 'Spotify desvinculado correctamente.', type: 'success' });
     } catch (e) {
       console.error('Error desconectando Spotify', e);
-      alert('No se pudo desvincular Spotify');
+      // Si el backend proporciona un detalle indicando que la cuenta fue creada
+      // únicamente con Spotify o que no puede desvincularse, mostrar un mensaje
+      // claro y accionable al usuario.
+      const detail = e?.response?.data?.detail || e?.message || '';
+      const lower = String(detail).toLowerCase();
+      if (lower.includes('solo') && lower.includes('spotify') || lower.includes('único') || lower.includes('únicamente') || lower.includes('no puedes desvincular')) {
+        setAlert({ message: 'Esta cuenta fue creada con Spotify, por lo que no puedes desvincularla. Ponte en contacto con nosotros.', type: 'error' });
+      } else {
+        setAlert({ message: 'No se pudo desvincular Spotify', type: 'error' });
+      }
     } finally {
       setDisconnecting(false);
     }
@@ -122,6 +133,7 @@ const Profile = () => {
 
   return (
     <div className="profile-page">
+      <Alert message={alert.message} type={alert.type} onClose={() => setAlert({ message: '', type: 'info' })} />
        <SharedNavbar onToggleSidebar={toggleSidebar} />
         <PrivateSidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 

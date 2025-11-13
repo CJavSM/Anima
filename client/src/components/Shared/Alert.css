@@ -1,0 +1,57 @@
+.anima-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 260px;
+  max-width: 420px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 9999;
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+}
+
+.anima-alert-info {
+  background: #e8f4ff;
+  color: #055160;
+  border-left: 4px solid #2b94d6;
+}
+
+.anima-alert-success {
+  background: #e6ffef;
+  color: #0b4f2b;
+  border-left: 4px solid #2bb673;
+}
+
+.anima-alert-error {
+  background: #ffecec;
+  color: #5b0b0b;
+  border-left: 4px solid #d64545;
+}
+
+.anima-alert-content {
+  flex: 1 1 auto;
+  font-size: 14px;
+}
+
+.anima-alert-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  padding: 6px;
+}
+
+@media (max-width: 480px) {
+  .anima-alert {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+    min-width: unset;
+  }
+}

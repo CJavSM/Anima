@@ -7,12 +7,9 @@ graph TB
         graph TB
             subgraph Cliente["Cliente - Frontend"]
                 A[React Application]
-                A1[Pages/Components]
-                A2[Context API]
                 A3[Services Layer]
 
-                A --> A1
-                A --> A2
+               
                 A --> A3
             end
 

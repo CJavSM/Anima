@@ -1,0 +1,69 @@
+@import './Login.css';
+
+/* AuthCallback specific styles - responsive and aligned with app design */
+.authcallback-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.authcallback-card {
+  width: 100%;
+  max-width: 720px;
+  background: white;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  box-shadow: 0 18px 40px rgba(31, 41, 55, 0.08);
+  border: 1px solid var(--gray-200);
+  text-align: center;
+}
+
+.authcallback-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.authcallback-subtitle {
+  color: var(--gray-600);
+  margin-bottom: 1rem;
+}
+
+.authcallback-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid rgba(58,29,225,0.12);
+  border-top-color: var(--primary);
+  animation: spin 0.8s linear infinite;
+  margin: 0.75rem auto 1rem;
+}
+
+.authcallback-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.authcallback-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .authcallback-card {
+    padding: 1.25rem;
+  }
+
+  .authcallback-title {
+    font-size: 1.25rem;
+  }
+}

@@ -314,6 +314,8 @@ class SpotifyAuthService:
         user.spotify_refresh_token = token_data.get("refresh_token")
         user.spotify_token_expires_at = expires_at
         user.spotify_connected = True
+        # Marcar al usuario como verificado al vincular su cuenta de Spotify
+        user.is_verified = True
         user.spotify_connected_at = datetime.now(timezone.utc)
 
         # Actualizar imagen de perfil si no tiene una

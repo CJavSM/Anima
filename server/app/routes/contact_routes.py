@@ -8,6 +8,10 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import logging
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +20,11 @@ router = APIRouter(
     tags=["Contacto"]
 )
 
-# Configuración de email
-EMAIL_SENDER = "equipo.soporte.anima@gmail.com"
-EMAIL_PASSWORD = "lbnrxxmrqxsglxze"
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+# Leer configuración de email desde variables de entorno
+EMAIL_SENDER = os.getenv("EMAIL_SENDER", "equipo.soporte.anima@gmail.com")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  # DEBE estar configurada en el entorno
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 
 class ContactMessage(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
@@ -143,6 +147,7 @@ Para responder, haz clic en "Responder" o envía un email a: {contact.email}
                     display: inline-block;
                     background: #4424d4;
                     color: white;
+                    forecolor: white;
                     padding: 12px 24px;
                     text-decoration: none;
                     border-radius: 8px;
@@ -171,7 +176,17 @@ Para responder, haz clic en "Responder" o envía un email a: {contact.email}
                         <span class="info-label">📝 Asunto:</span>
                         <span>{contact.subject}</span>
                     </div>
-                    <a href="mailto:{contact.email}" class="btn-reply">Responder</a>
+                                        <!-- Email button: table-based for better compatibility across clients -->
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;">
+                                            <tr>
+                                                <td align="center" bgcolor="#4424d4" style="border-radius:8px;">
+                                                    <a href="mailto:{contact.email}" target="_blank" style="display:inline-block; padding:12px 24px; color:#ffffff !important; text-decoration:none; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
+                                                        Responder
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p style="margin-top:8px; font-size:13px; color:#6b7280;">O responde manualmente a: <a href="mailto:{contact.email}" style="color:#4424d4; text-decoration:underline;">{contact.email}</a></p>
                 </div>
                 
                 <h3 style="color: #1f2937; margin-bottom: 10px;">💬 Mensaje:</h3>
@@ -194,6 +209,14 @@ Para responder, haz clic en "Responder" o envía un email a: {contact.email}
         msg.attach(part1)
         msg.attach(part2)
         
+        # Verificar que las credenciales están configuradas
+        if not EMAIL_PASSWORD:
+            logger.error("❌ Credenciales de email no configuradas en las variables de entorno")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Credenciales de email no configuradas en el servidor. Contacta al administrador."
+            )
+
         # Enviar email
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
             server.starttls()
@@ -239,5 +262,7 @@ async def health_check():
     return {
         "status": "ok",
         "service": "contact",
-        "email_configured": bool(EMAIL_SENDER and EMAIL_PASSWORD)
+        "email_configured": bool(EMAIL_SENDER and EMAIL_PASSWORD),
+        "smtp_server": SMTP_SERVER,
+        "smtp_port": SMTP_PORT
     }
